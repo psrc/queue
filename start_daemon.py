@@ -1,7 +1,7 @@
 from __future__ import print_function
 import Pyro4
 
-server_hostname = '192.168.56.1'
+server_hostname = '10.10.10.202'
 
 class Jobs(object):
     def __init__(self):
