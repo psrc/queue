@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from controller.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 # Import run_soundcast script
-import test_import
+#import test_import
 
 # def index(request):
 # 	return HttpResponse("This is the model controller app!")
@@ -105,18 +105,18 @@ def user_logout(request):
 	return HttpResponseRedirect('/controller/')
 
 def soundcast(request):
-	# context = RequestContext(request)
+	context = RequestContext(request)
 
 	# # Display the parameters from input_configuration
 	# input_config_value = InputConfigurationValue()
 
-	# return render_to_response('controller/soundcast.html', context)
+	return render_to_response('controller/soundcast.html', context)
 
 	# Load test_import.py
-	instance = test_import.Test()
-	instance.call_run_sc()
+	#instance = test_import.Test()
+	#instance.call_run_sc()
 
-	return HttpResponse("calculating.")
+	#return HttpResponse("calculating.")
 
 def test_task(request):
     # Try to run the tasks.py script (celery tasks)
