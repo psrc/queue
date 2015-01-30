@@ -14,8 +14,8 @@ class Testcase(object):
         self.value = 1
 
     def runmodel(self):
-        print ("Running some test code. You should see the text file 'itworked.txt now")
         subprocess.call([sys.executable, 'test.py'])
+        print ("You're running a model run now")
 
 print("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
 
@@ -58,6 +58,8 @@ while True:
         if s is broadcastServer:
             print("Broadcast server received a request")
             broadcastServer.processRequest()
+            ############### Running a script directly right here, how else can we do this?
+            Testcase().runmodel()
         elif s in nameserverSockets:
             eventsForNameserver.append(s)
         elif s in pyroSockets:
