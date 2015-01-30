@@ -31,15 +31,16 @@ test = ['MODELSRV2']
 
 
 # Start the model run on the modelserver
-def start_model(hostname):
-    try:
-        proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
-        proxy.runmodel()
-        print "Started model run on: " + hostname
-    except:
-        print sys.exc_info()
-        traceback.print_exc()
-        print "Couldn't connect to: " + hostname
+class StartModel():
+    def start_model(self, hostname):
+        try:
+            proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
+            proxy.runmodel()
+            print "Started model run on: " + hostname
+        except:
+            print sys.exc_info()
+            #traceback.print_exc()
+            print "Couldn't connect to: " + hostname
 
 # Try connecting to a server
 for host in serverlist:
