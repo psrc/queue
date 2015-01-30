@@ -1,11 +1,12 @@
 # This should be running on all model servers
-
+import os
 import Pyro4
 import time
 import subprocess
 import sys
 import socket
 import select
+import threading
 
 hostname = socket.gethostname()
 
@@ -15,7 +16,15 @@ class Testcase(object):
 
     def runmodel(self):
         subprocess.call([sys.executable, 'test.py'])
-        print ("You're running a model run now")
+        print ("Run requested by: " + str(broadcastServer))
+
+# Find space to run the model
+NUMCPU = int(os.getenv("NUMBER_OF_PROCESSORS"))
+CPURunner = threading.Semaphore(NUMCPU)
+runner = CPURunner.acquire()  # block, until a CPU is free
+
+# All done with this jobqueue, let's give the CPU back and exit.
+CPURunner.release()
 
 print("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
 
@@ -38,7 +47,7 @@ serveruri = pyrodaemon.register(Testcase())
 print("server uri: %s" % serveruri)
 
 # Register object with the embedded nameserver directly
-nameserverDaemon.nameserver.register("test", serveruri)
+nameserverDaemon.nameserver.register(hostname, serveruri)
 
 print("")
 
