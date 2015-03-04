@@ -7,6 +7,7 @@ import sys
 import socket
 import select
 import threading
+import shutil
 
 hostname = socket.gethostname()
 
@@ -17,6 +18,14 @@ class Testcase(object):
     def runmodel(self):
         subprocess.call([sys.executable, 'test.py'])
         print ("Run requested by: " + str(broadcastServer))
+        # Clone latest Soundcast repository
+        try:
+            shutil.rmtree('soundcast')
+        repo = 'https://github.com/psrc/soundcast'
+        os.system("git clone " + repo)
+        #  
+        os.chdir('soundcast')
+        subprocess.call([sys.executable, 'run_soundcast.py'])
 
 # Find space to run the model
 NUMCPU = int(os.getenv("NUMBER_OF_PROCESSORS"))
