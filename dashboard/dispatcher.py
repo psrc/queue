@@ -13,34 +13,33 @@
 # limitations under the License.
 
 # !python.exe
-# PSRC Model Run Manager
+# PSRC Model Run Dispatcher
 # ===========================
 import os
 import sys
 import Pyro4
+import numpy as np
 
+# List of potential model server machines on local network
 serverlist =  ['MODELSRV' + str(i) for i in xrange(1,5)]
-#hostname = 'MODELSRV2'
 
-test = ['MODELSRV2']
-
-# Add another host for testing
-#serverlist.insert(0, 'PSRC3827')
-
-# Search network for servers running a Pyro daemon (via client.py)
-
+runid = np.random.randint(1, 10000)
 
 # Start the model run on the modelserver
 class StartModel():
     def start_model(self, hostname):
         try:
             proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
-            proxy.runmodel()
+            proxy.runmodel(runid)
             print "Started model run on: " + hostname
+
+            return runid
+
         except:
             print sys.exc_info()
             #traceback.print_exc()
             print "Couldn't connect to: " + hostname
+
 
 # Try connecting to a server
 for host in serverlist:
