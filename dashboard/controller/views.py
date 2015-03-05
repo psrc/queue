@@ -6,7 +6,7 @@ from controller.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 # Test interaction with model dispatcher
 import dispatcher
-hostname = 'MODELSRV2'  # hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
+hostname = 'PSRC3827'  # hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
 
 # def index(request):
 # 	return HttpResponse("This is the model controller app!")
@@ -106,10 +106,8 @@ def user_logout(request):
 	return HttpResponseRedirect('/controller/')
 
 def soundcast(request):
-	#context = RequestContext(request)
-	#return render_to_response('controller/soundcast.html', context)
-
+    ''' Initiate a new Soundcast run '''
     instance = dispatcher.StartModel()
-    instance.start_model(hostname)
+    runid = instance.start_model(hostname)
     
-    return HttpResponse('Order received, thank you come again!')
+    return HttpResponse('Order received, thank you come again!' + str(runid))
