@@ -26,6 +26,12 @@ import socket
 import select
 import threading
 import shutil
+import logging
+import logcontroller
+
+# Save standard output to a text file
+sys.stdout = open('file', 'w')
+
 
 class Testcase(object):
     def __init__(self):
@@ -33,19 +39,35 @@ class Testcase(object):
 
     def runmodel(self, runid):
         ''' Start fresh model run '''
-        ##print ("Run requested by: " + str(broadcastServer))
-        ## Create new directory and clone latest Soundcast repository
-        #os.mkdir('soundcast' + runid)
-        #try:
-        #    shutil.rmtree('soundcast', ignore_errors=True)
-        #except:
-        #    pass
-        #repo = 'https://github.com/psrc/soundcast'
-        #os.system("git clone " + repo)
-        ##  
-        #os.chdir('soundcast')
-        #subprocess.call([sys.executable, 'run_soundcast.py'])
-        return runid
+        # Create new directory 
+        try:
+            dirname = 'soundcast_' + str(runid)
+            os.mkdir(dirname)
+            os.chdir(dirname)
+        except:
+            return "Unable to create directory"
+
+        # Create a new log file
+        logger = logcontroller.setup_custom_logger(str(runid))
+        logger.info('Run ID: ' + str(runid))
+        
+        # Clone the Soundcast repository
+        repo = 'https://github.com/psrc/soundcast'
+        returncode = os.system("git clone " + repo)
+        if returncode == 0:
+            logger.info('Cloned latest Soundcast repository')
+        else:
+            logger.error('Unable to clone into Soundcast repo: returncode ' + str(returncode))
+
+        # Execute soundcast code
+        os.chdir('soundcast')
+        returncode = subprocess.call([sys.executable, 'run_soundcast.py'])
+        if returncode == 0:
+            logger.info('Started run_soundcast.py')
+        else:
+            logger.error('Error starting run_soundcast: returncode ' + str(returncode))
+
+        return logger
 
 # Find space to run the model
 #NUMCPU = int(os.getenv("NUMBER_OF_PROCESSORS"))
@@ -99,12 +121,9 @@ def main():
             if s is broadcastServer:
                 print("Broadcast server received a request")
                 broadcastServer.processRequest()
-                #testcase = Testcase()
-                #testcase.runmodel()
-
-                # Request received - start model run
-                #instance = Testcase()
-                #instance.test(input_string)
+                
+                # Should there just be a break here? Another branch that just starts logging model progress?
+                #break
             elif s in nameserverSockets:
                 eventsForNameserver.append(s)
             elif s in pyroSockets:

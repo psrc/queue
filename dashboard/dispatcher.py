@@ -23,6 +23,7 @@ import numpy as np
 # List of potential model server machines on local network
 serverlist =  ['MODELSRV' + str(i) for i in xrange(1,5)]
 
+# Placeholder for Run ID
 runid = np.random.randint(1, 10000)
 
 # Start the model run on the modelserver
