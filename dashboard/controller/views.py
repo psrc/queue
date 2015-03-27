@@ -124,6 +124,9 @@ def get_name(request):
         form = NameForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
+
+            instance = dispatcher.StartModel()
+            instance.start_model(hostname)
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:

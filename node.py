@@ -32,7 +32,6 @@ import logcontroller
 # Save standard output to a text file
 sys.stdout = open('file', 'w')
 
-
 class Testcase(object):
     def __init__(self):
         pass
