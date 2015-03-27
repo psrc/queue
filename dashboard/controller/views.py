@@ -126,7 +126,7 @@ def get_name(request):
         if form.is_valid():
 
             instance = dispatcher.StartModel()
-            instance.start_model(hostname)
+            instance.start_model(hostname='PSRC3827', runid=form.cleaned_data['your_name'])
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:

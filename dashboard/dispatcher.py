@@ -30,7 +30,7 @@ runid = np.random.randint(1, 10000)
 
 # Start the model run on the modelserver
 class StartModel():
-    def start_model(self, hostname):
+    def start_model(self, hostname, runid):
         try:
             proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
             proxy.runmodel(runid)
@@ -45,9 +45,9 @@ class StartModel():
 
 
 # Try connecting to a server
-for host in serverlist:
-    print 'trying to run on ' + host
-    try: 
-        start_model(host)
-    except:
-        "Not connected to: " + host
+#for host in serverlist:
+#    print 'trying to run on ' + host
+#    try: 
+#        start_model(host)
+#    except:
+#        "Not connected to: " + host
