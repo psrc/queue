@@ -122,7 +122,7 @@ def fourkay(request):
     context = RequestContext(request)
     return render_to_response('controller/4k.html', {}, context)
 
-def get_name(request):
+def run_soundcast(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
