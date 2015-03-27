@@ -9,4 +9,5 @@ urlpatterns = patterns('',
 	url(r'about/$', views.about, name='about'),
 	url(r'soundcast/$', views.soundcast, name='soundcast'),
     url(r'run/$', views.get_name, name='get_name'),
+    url(r'4k/$', views.fourkay, name='fourkay'),
 	)

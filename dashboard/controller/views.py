@@ -117,6 +117,11 @@ def soundcast(request):
     context = RequestContext(request)
     return render_to_response('controller/soundcast.html', {}, context)
 
+def fourkay(request):
+    # Load the soundcast page
+    context = RequestContext(request)
+    return render_to_response('controller/4k.html', {}, context)
+
 def get_name(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':

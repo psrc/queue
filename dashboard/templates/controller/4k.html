@@ -1,0 +1,18 @@
+{% extends 'controller/base.html' %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+ <h1>4k</h1>
+ <h2>PSRC's trip-based travel model</h2>
+
+<form action="run/" method="post">
+	{% csrf_token %}
+    <label for="your_name">Run ID: </label>
+    <input id="your_name" type="text" name="your_name" value="{{ current_name }}">
+    <input type="submit" value="Start 4K Run">
+</form>
+
+
+{% endblock %}
