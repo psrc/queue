@@ -5,11 +5,18 @@
 {% block body_block %}
 <div class="hero-unit">
  <h1>Soundcast</h1>
- <p>PSRC's activity-based travel model. Ahoy!
- <p>
- <div style="opacity: 0.7;">
-   <img src="http://www.socialgreetings.net/upload/cat-105.jpg" alt="soundcat"></p></div>
+ <p>PSRC's activity-based travel model. Ahoy!</p>
 
+<form action="run/" method="post">
+	{% csrf_token %}
+    <label for="your_name">Run ID: </label>
+    <input id="your_name" type="text" name="your_name" value="{{ current_name }}">
+    <input type="submit" value="Start Run">
+</form>
+
+
+ <div style="opacity: 0.7;">
+   <p><img src="http://www.socialgreetings.net/upload/cat-105.jpg" alt="soundcat"></p></div>
 
 </div>
 {% endblock %}

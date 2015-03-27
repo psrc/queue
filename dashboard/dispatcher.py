@@ -21,9 +21,11 @@ import Pyro4
 import numpy as np
 
 # List of potential model server machines on local network
-serverlist =  ['MODELSRV' + str(i) for i in xrange(1,5)]
+#serverlist =  ['MODELSRV' + str(i) for i in xrange(1,5)]
+serverlist = ['PSRC3827']
 
 # Placeholder for Run ID
+# Want the user to be able to define this ID, or use a datetime stamp
 runid = np.random.randint(1, 10000)
 
 # Start the model run on the modelserver

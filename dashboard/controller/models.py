@@ -23,3 +23,6 @@ class UserProfile(models.Model):
 	# Override the __unicode__() method to return something meaningful
 	def __unicode__(self):
 		return self.user.username
+
+class SoundcastRuns(models.Model):
+    runid = models.CharField(max_length=240, db_index=True)

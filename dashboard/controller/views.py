@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from controller.forms import UserForm, UserProfileForm
+from controller.forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
 from django.contrib.auth import authenticate, login, logout
 # Test interaction with model dispatcher
 import dispatcher
@@ -20,6 +20,13 @@ def index(request):
     # Find the user's name
     if request.user.is_authenticated():
     	username = {'logged_name': request.user.username}
+
+    if request.POST:
+        form = SoundcastRuns(request.POST)
+        if form.is_valid():
+            instance = form.save()
+    else :
+        form = SoundcastRuns()
     
     return render_to_response('controller/index.html', username, context)
 
@@ -106,8 +113,24 @@ def user_logout(request):
 	return HttpResponseRedirect('/controller/')
 
 def soundcast(request):
-    ''' Initiate a new Soundcast run '''
-    instance = dispatcher.StartModel()
-    runid = instance.start_model(hostname)
-    
-    return HttpResponse('Order received, thank you come again!' + str(runid))
+    # Load the soundcast page
+    context = RequestContext(request)
+    return render_to_response('controller/soundcast.html', {}, context)
+
+def get_name(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            #return HttpResponseRedirect('/thanks/')
+            return render(request, 'controller/thanks.html', {'form': form})
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = NameForm()
+
+    return render(request, 'controller/name.html', {'form': form})
