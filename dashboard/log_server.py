@@ -1,3 +1,5 @@
+# This script creates a local log server to consolidate log files of all model runs and requests
+
 import pickle
 import logging
 import logging.handlers
@@ -75,7 +77,8 @@ class LogRecordSocketReceiver(SocketServer.ThreadingTCPServer):
 
 def main():
     logging.basicConfig(
-        format='%(relativeCreated)5d %(name)-15s %(levelname)-8s %(message)s')
+                        filename='remote.log',
+                        format='%(relativeCreated)5d %(name)-15s %(levelname)-8s %(message)s')
     tcpserver = LogRecordSocketReceiver()
     print('About to start TCP server...')
     tcpserver.serve_until_stopped()

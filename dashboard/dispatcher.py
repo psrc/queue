@@ -38,12 +38,11 @@ class StartModel():
     def start_model(self, hostname, runid):
         
         # Start a logging mini-server
-        subprocess.call([sys.executable, 'log_client.py'], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        subprocess.Popen([sys.executable, 'log_server.py'], stdin=None, stdout=None, stderr=None)
 
+
+        ###########
         rootLogger = logging.getLogger('')
-        hdlr = logging.FileHandler('test.log')
-        rootLogger.addHandler(hdlr)
-        rootLogger.setLevel(logging.DEBUG)
         socketHandler = logging.handlers.SocketHandler('localhost',
                             logging.handlers.DEFAULT_TCP_LOGGING_PORT)
         # don't bother with a formatter, since a socket handler sends the event as
