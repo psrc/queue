@@ -80,7 +80,7 @@ def main():
                         filename='remote.log',
                         format='%(relativeCreated)5d %(name)-15s %(levelname)-8s %(message)s')
     tcpserver = LogRecordSocketReceiver()
-    print('About to start TCP server...')
+    print('Starting central log server...')
     tcpserver.serve_until_stopped()
 
 if __name__ == '__main__':
