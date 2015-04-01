@@ -3,6 +3,9 @@
 # default RabbitMQ broker
 BROKER_URL = 'amqp://psrc:psrc1@10.10.11.194/psrcvhost'
 
+# List of modules to import when celery starts.
+CELERY_IMPORTS = ('tasks', )
+
 # default RabbitMQ backend
 CELERY_RESULT_BACKEND = 'amqp://'
 
