@@ -1,7 +1,7 @@
 # config file for Celery Daemon
 
 # default RabbitMQ broker
-BROKER_URL = 'amqp://'
+BROKER_URL = 'amqp://psrc:psrc1@10.10.11.89/psrcvhost'
 
 # default RabbitMQ backend
 CELERY_RESULT_BACKEND = 'amqp://'

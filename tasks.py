@@ -1,7 +1,7 @@
 from celery import Celery
 import os
 
-app = Celery('tasks', backend='amqp', broker='amqp://guest@localhost//')
+app = Celery('tasks', backend='amqp', broker='amqp://psrc:psrc1@10.10.11.89/psrcvhost')
 
 @app.task
 def add(x, y):
