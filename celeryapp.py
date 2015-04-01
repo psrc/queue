@@ -1,7 +1,7 @@
 from __future__ import absolute_import
-from celery.utils.log import get_task_logger
+#from celery.utils.log import get_task_logger
 from celery import Celery
-import logging
+
 
 # app = Celery(
 #               broker='amqp://',
@@ -12,14 +12,15 @@ app = Celery()
 
 app.config_from_object('celeryconfig')
 
-logger = get_task_logger(__name__)
-log = logging.getLogger(__name__)
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 logging.basicConfig(filename='myapp.log')
 
 @app.task
 def add(x, y):
     #logger.info('Adding %s + %s' % (x, y))
-    logging.info(x)
+    logger.info(x)
     return x + y
 
 @app.task
