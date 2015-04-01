@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from celery import Celery
+import logging
 
 # app = Celery(
 #               broker='amqp://',
@@ -11,7 +12,7 @@ app = Celery()
 
 app.config_from_object('celeryconfig')
 
-logger = get_task_logger(__name__)
+logger = logging.get_task_logger(__name__)
 
 @app.task
 def add(x, y):
