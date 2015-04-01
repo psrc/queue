@@ -12,6 +12,9 @@ CELERY_RESULT_BACKEND = 'amqp://'
 # specify location of log files
 CELERYD_LOG_FILE="celery.log"
 
+# Truns off automatic celery logging
+ELERYD_HIJACK_ROOT_LOGGER = False
+
 
 #from celery.signals import setup_logging
 #@setup_logging.connect
