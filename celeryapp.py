@@ -9,6 +9,28 @@ from celery import Celery
 
 app = Celery()
 
+app.config_from_object('celeryconfig')
+
+logger = get_task_logger(__name__)
+
+@app.task
+def add(x, y):
+    logger.info('Adding %s + %s' % (x, y))
+    return x + y
+
+@app.task
+def mul(x, y):
+    return x * y
+
+@app.task
+def xsum(numbers):
+    return sum(numbers)
+
+@app.task
+def make_dir(dirname):
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+
 # # instantiate Celery object
 # celery = Celery(include=[
 #                          'tasks'
@@ -20,7 +42,6 @@ app = Celery()
 # )
 
 # import celery config file
-app.config_from_object('celeryconfig')
 
 if __name__ == '__main__':
     app.start()
