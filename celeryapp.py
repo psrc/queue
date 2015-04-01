@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+from celery.utils.log import get_task_logger
 from celery import Celery
 import logging
 
@@ -12,7 +12,7 @@ app = Celery()
 
 app.config_from_object('celeryconfig')
 
-logger = logging.get_task_logger(__name__)
+logger = get_task_logger(__name__)
 
 @app.task
 def add(x, y):
