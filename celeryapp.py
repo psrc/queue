@@ -12,9 +12,9 @@ app = Celery()
 
 app.config_from_object('celeryconfig')
 
-logger = get_task_logger(__name__)
+#logger = get_task_logger(__name__)
 log = logging.getLogger(__name__)
-logging.basicConfig(filename='myapp.log')
+log.basicConfig(filename='myapp.log')
 
 @app.task
 def add(x, y):
