@@ -34,6 +34,12 @@ class Testcase(object):
     def __init__(self):
         pass
 
+    def runtest(self):
+        for i in xrange(20):
+            print "Here is some text: line " + str(i)
+            with open('example_output.txt', 'w') as f:
+                f.write('There is also some text in the file.')
+
     def runmodel(self, runid):
         ''' Start fresh model run '''
         # Create new directory 
