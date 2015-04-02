@@ -26,32 +26,9 @@ import socket
 import select
 import threading
 import shutil
-import logging, logging.handlers
+import logging
 
-
-rootLogger = logging.getLogger('')
-rootLogger.setLevel(logging.DEBUG)
-socketHandler = logging.handlers.SocketHandler('localhost',
-                    logging.handlers.DEFAULT_TCP_LOGGING_PORT)
-# don't bother with a formatter, since a socket handler sends the event as
-# an unformatted pickle
-rootLogger.addHandler(socketHandler)
-
-# Now, we can log to the root logger, or any other logger. First the root...
-logging.info('Jackdaws love my big sphinx of quartz.')
-
-# Now, define a couple of other loggers which might represent areas in your
-# application:
-
-logger1 = logging.getLogger('myapp.area1')
-logger2 = logging.getLogger('myapp.area2')
-
-logger1.debug('Quick zephyrs blow, vexing daft Jim.')
-logger1.info('How quickly daft jumping zebras vex.')
-logger2.warning('Jail zesty vixen who grabbed pay from quack.')
-logger2.error('The five boxing wizards jump quickly.')
-
-
+logging.basicConfig(filename='node.log',level=logging.DEBUG)
 
 class Testcase(object):
     def __init__(self):
@@ -66,34 +43,30 @@ class Testcase(object):
             os.chdir(dirname)
         except:
             return "Unable to create directory"
-
         
         # Clone the Soundcast repository
         repo = 'https://github.com/psrc/soundcast'
         returncode = os.system("git clone " + repo)
         if returncode == 0:
-            logger1.info('Cloned latest Soundcast repository')
+            logging.info('Cloned latest Soundcast repository')
         else:
-            logger1.error('Unable to clone into Soundcast repo: returncode ' + str(returncode))
+            logging.error('Unable to clone into Soundcast repo: returncode ' + str(returncode))
 
         # Execute soundcast code
         os.chdir('soundcast')
-        returncode = subprocess.call([sys.executable, 'run_soundcast.py'])
+        stdout_file = open('stdout.log', 'w')
+        stderr_file = open('stderr.log', 'w')
+        returncode = subprocess.call([sys.executable, 'run_soundcast.py'], stdout=stdout_file, stderr=stderr_file)
+        stdout_file.close()
+        stderr_file.close()
         if returncode == 0:
-            logger1.info('Started run_soundcast.py')
+            logging.info('Completed run_soundcast.py')
         else:
-            logger1.error('Error starting run_soundcast: returncode ' + str(returncode))
-
-        return logger1
-
+            logging.error('Error running soundcast: returncode ' + str(returncode))
 
 def main():
 
     print("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
-
-
-
-
 
         # Start a name server and a broadcast server
     hostname = socket.gethostname()
