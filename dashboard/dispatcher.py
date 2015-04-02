@@ -36,44 +36,17 @@ runid = np.random.randint(1, 10000)
 # Start the model run on the modelserver
 class StartModel():
     def start_model(self, hostname, runid):
-        
-        # Start a logging mini-server
-        subprocess.Popen([sys.executable, 'log_server.py'], stdin=None, stdout=None, stderr=None)
-
-
-        ###########
-        rootLogger = logging.getLogger('')
-        socketHandler = logging.handlers.SocketHandler('localhost',
-                            logging.handlers.DEFAULT_TCP_LOGGING_PORT)
-        # don't bother with a formatter, since a socket handler sends the event as
-        # an unformatted pickle
-        rootLogger.addHandler(socketHandler)
-
-        # Now, we can log to the root logger, or any other logger. First the root...
-        logging.info('Jackdaws love my big sphinx of quartz.')
-
-        # Now, define a couple of other loggers which might represent areas in your
-        # application:
-
-        logger1 = logging.getLogger('myapp.area1')
-        logger2 = logging.getLogger('myapp.area2')
-
-        logger1.debug('Quick zephyrs blow, vexing daft Jim.')
-        logger1.info('How quickly daft jumping zebras vex.')
-        logger2.warning('Jail zesty vixen who grabbed pay from quack.')
-        logger2.error('The five boxing wizards jump quickly.')
 
         print('Connecting to node...')
         try:
-            #sys.stdout = open('file', 'w')
             proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
             
-            SocketServer.StreamRequestHandler
-            
-            proxy.runmodel(runid)
-            print "Started model run on: " + hostname
+            proxy.runtest()
 
-            return runid
+            #proxy.runmodel(runid)
+            #print "Started model run on: " + hostname
+
+            #return runid
 
         except:
             print sys.exc_info()
