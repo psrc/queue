@@ -26,29 +26,41 @@ import struct
 import subprocess
 
 # List of potential model server machines on local network
-#serverlist =  ['MODELSRV' + str(i) for i in xrange(1,5)]
-serverlist = ['PSRC3827']
+nodelist = ['PSRC3827', 'MODELSRV2', 'MODELSRV3', 'MODELSRV4']
 
-# Placeholder for Run ID
-# Want the user to be able to define this ID, or use a datetime stamp
-runid = np.random.randint(1, 10000)
+def check_nodes(nodelist):
+    ''' 
+    Check run state on nodes.
+    0 = Available
+    1 = Unavailable
+    2 = Error, unable to connect
+    '''
 
-# Start the model run on the modelserver
-class StartModel():
-    def start_model(self, hostname, runid):
-
-        print('Connecting to node...')
+    node_dict = {}
+    # Create dictionary from nodelist and check state of each node
+    # Note initial state 0 assumed first, updated with check_node_state call
+    for node, state in dict((node,0) for node in nodelist).iteritems():     
         try:
-            proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
-            
-            proxy.runtest()
-
-            #proxy.runmodel(runid)
-            #print "Started model run on: " + hostname
-
-            #return runid
-
+            proxy = Pyro4.core.Proxy("PYRONAME:" + node)
+            node_dict[node] = proxy.check_node_state()
         except:
-            print sys.exc_info()
-            #traceback.print_exc()
-            print "Couldn't connect to: " + hostname
+            node_dict[node] = 2   # Error, unable to connect to node and/or check node state
+
+    return node_dict
+
+# Start model run on specified node
+class StartModel:
+
+    def __init__(self):
+        self.proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
+
+    def start_model(self):
+
+        #proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
+            
+        # Run a simple test script for now
+        self.proxy.runtest()  
+
+        # 
+                 
+        #proxy.runmodel(runid)

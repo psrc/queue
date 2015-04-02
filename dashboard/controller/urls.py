@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 	url(r'soundcast/$', views.soundcast, name='soundcast'),
     url(r'run-sc/$', views.run_soundcast, name='run_soundcast'),
     url(r'4k/$', views.fourkay, name='fourkay'),
+    url(r'monitor/$', views.monitor, name='monitor'),
 	)

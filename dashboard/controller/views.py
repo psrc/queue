@@ -122,6 +122,11 @@ def fourkay(request):
     context = RequestContext(request)
     return render_to_response('controller/4k.html', {}, context)
 
+def monitor(request):
+    # Load the monitoring page
+    context = RequestContext(request)
+    return render_to_response('controller/monitor.html', {}, context)
+
 def run_soundcast(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':

@@ -28,18 +28,32 @@ import threading
 import shutil
 import logging
 
+
 logging.basicConfig(filename='node.log',level=logging.DEBUG)
 
 class Testcase(object):
-    def __init__(self):
-        pass
 
+    def __init__(self):
+        self.node_state = 0
+
+    def check_node_state(self):
+        ''' Pyro won't expose private methods, so we need a public method to check node state '''
+        return self.node_state
+
+    @Pyro4.oneway   # decorator implies we don't wait for return before executing next code lines
     def runtest(self):
+        ''' Example test function that write text to file, runs for several minutes '''
+        self.node_state = 1         # Node is busy
         for i in xrange(20):
             print "Here is some text: line " + str(i)
+            time.sleep(30)          # Stretch this out so we can test a continual process
             with open('example_output.txt', 'w') as f:
                 f.write('There is also some text in the file.')
+        self.node_state = 0         # Node is free for now
 
+
+
+    @Pyro4.oneway
     def runmodel(self, runid):
         ''' Start fresh model run '''
         # Create new directory 
@@ -72,33 +86,31 @@ class Testcase(object):
 
 def main():
 
-    print("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
+    logging.info('Started node on %s' %  socket.gethostname())
+    logging.info("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
 
         # Start a name server and a broadcast server
-    hostname = socket.gethostname()
-    nameserverUri, nameserverDaemon, broadcastServer = Pyro4.naming.startNS(host=hostname)
+    nameserverUri, nameserverDaemon, broadcastServer = Pyro4.naming.startNS(host=socket.gethostname())
     assert broadcastServer is not None, "Expecting a broadcast server to be created"
 
-    print("created nameserver, uri: %s" % nameserverUri)
-    print("ns daemon location string: %s" % nameserverDaemon.locationStr)
-    print("ns daemon sockets: %s" % nameserverDaemon.sockets)
-    print("bc server socket: %s (fileno %d)" % (broadcastServer.sock, broadcastServer.fileno()))
-
-    # Start a log server too
+    logging.info("created nameserver, uri: %s" % nameserverUri)
+    logging.info("ns daemon location string: %s" % nameserverDaemon.locationStr)
+    logging.info("ns daemon sockets: %s" % nameserverDaemon.sockets)
+    logging.info("bc server socket: %s (fileno %d)" % (broadcastServer.sock, broadcastServer.fileno()))
 
     # Create a Pyro daemon
-    pyrodaemon = Pyro4.Daemon(host=hostname)
-    print("daemon location string: %s" % pyrodaemon.locationStr)
-    print("daemon sockets: %s" % pyrodaemon.sockets)
+    pyrodaemon = Pyro4.Daemon(host=socket.gethostname())
+    logging.info("daemon location string: %s" % pyrodaemon.locationStr)
+    logging.info("daemon sockets: %s" % pyrodaemon.sockets)
 
     # Register the server object with the daemon
     serveruri = pyrodaemon.register(Testcase())
-    print("server uri: %s" % serveruri)
+    logging.info("server uri: %s" % serveruri)
 
     # Register object with the embedded nameserver directly
-    nameserverDaemon.nameserver.register(hostname, serveruri)
+    nameserverDaemon.nameserver.register(socket.gethostname(), serveruri)
 
-    print("")
+    logging.info("")
 
     # Wait to be called by dispatcher
     while True:
@@ -116,7 +128,6 @@ def main():
             if s is broadcastServer:
                 print("Broadcast server received a request")
                 broadcastServer.processRequest()
-                
                 # Should there just be a break here? Another branch that just starts logging model progress?
                 #break
             elif s in nameserverSockets:
