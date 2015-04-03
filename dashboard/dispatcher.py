@@ -48,19 +48,31 @@ def check_nodes(nodelist):
 
     return node_dict
 
+def rd_check_nodes(node_dict):
+    readable_dict = {0: "Available", 1: "In Use", 2: "Connection Error"}
+    result = {}
+    for node, state in node_dict.iteritems(): 
+        result[node] = readable_dict[state]
+    
+    return result
+
 # Start model run on specified node
 class StartModel:
 
     def __init__(self):
-        self.proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
+        pass
 
-    def start_model(self):
+    def start_model(self, hostname, runid):
 
-        #proxy = Pyro4.core.Proxy("PYRONAME:" + hostname)
-            
-        # Run a simple test script for now
-        self.proxy.runtest()  
-
-        # 
-                 
-        #proxy.runmodel(runid)
+        # Run on any available machine from the nodelist
+        for node, status in check_nodes(nodelist).iteritems():
+            print node
+            if status == 0:
+                print "This machine is free: " + node 
+                print "Starting a new run here."
+                proxy = Pyro4.core.Proxy("PYRONAME:" + node)
+                # Run a simple test script for now
+                proxy.runtest()
+                break
+            else:
+                print node +" is unavailable, trying another node..."

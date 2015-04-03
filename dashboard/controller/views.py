@@ -125,7 +125,18 @@ def fourkay(request):
 def monitor(request):
     # Load the monitoring page
     context = RequestContext(request)
-    return render_to_response('controller/monitor.html', {}, context)
+
+    # List of potential model server machines on local network
+    nodelist = ['PSRC3827', 'MODELSRV2', 'MODELSRV3', 'MODELSRV4']
+
+    # Show run status
+    code_dict = dispatcher.check_nodes(nodelist)
+    results_dict = dispatcher.rd_check_nodes(code_dict)
+
+    return render_to_response('controller/monitor.html',
+    {'data': sorted(results_dict.iteritems())})
+    
+#return render_to_response('controller/monitor.html', {}, context)
 
 def run_soundcast(request):
     # if this is a POST request we need to process the form data
@@ -141,7 +152,7 @@ def run_soundcast(request):
             # ...
             # redirect to a new URL:
             #return HttpResponseRedirect('/thanks/')
-            return render(request, 'controller/thanks.html', {'form': form})
+            return render(request, 'controller/monitor.html', {'form': form})
     # if a GET (or any other method) we'll create a blank form
     else:
         form = NameForm()
