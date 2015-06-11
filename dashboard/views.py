@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
+from django.views import generic
 
 from .forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
 from .models import RunLog
@@ -11,19 +12,12 @@ from .models import RunLog
 import dispatcher
 hostname = 'PSRC3827'  #todo hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
 
-def index(request):
-    # Obtain the context from the HTTP request
-    context = RequestContext(request)
-
-    # Find the user's name
-    vars = {}
-    if request.user.is_authenticated():
-        vars['logged_name'] = request.user.username
-
-    # Fetch the entire list of all runs ever run before
-    vars['runlog'] = RunLog.objects.all()
-
-    return render_to_response('dashboard/index.html', vars)
+class IndexView(generic.ListView):
+    template_name = 'dashboard/index.html'
+    context_object_name = 'runlog'
+    def get_queryset(self):
+        """Return the runlog"""
+        return RunLog.objects.all()
 
 
 def launcher(request):

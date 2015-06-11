@@ -45,8 +45,22 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_tables2',
     'dashboard'
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.template.context_processors.debug',
+    'django.template.context_processors.i18n',
+    'django.template.context_processors.media',
+    'django.template.context_processors.static',
+    'django.template.context_processors.tz',
+    # 'django.template.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.request',
+)
+
 
 TEMPLATE_DIRS = (
     TEMPLATE_PATH,
