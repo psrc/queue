@@ -2,22 +2,28 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from controller.forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
 from django.contrib.auth import authenticate, login, logout
+
+from .forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
+from .models import RunLog
+
 # Test interaction with model dispatcher
 import dispatcher
-hostname = 'PSRC3827'  # hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
+hostname = 'PSRC3827'  #todo hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
 
 def index(request):
     # Obtain the context from the HTTP request
     context = RequestContext(request)
 
     # Find the user's name
-    username = None
+    vars = {}
     if request.user.is_authenticated():
-        username = {'logged_name': request.user.username}
+        vars['logged_name'] = request.user.username
 
-    return render_to_response('controller/index.html', username, context)
+    # Fetch the entire list of all runs ever run before
+    vars['runlog'] = RunLog.objects.all()
+
+    return render_to_response('controller/index.html', vars)
 
 
 def launcher(request):

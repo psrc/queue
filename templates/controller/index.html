@@ -7,7 +7,18 @@
 
 <div class="span3">
 <h3>RUN LOG</h3>
-<p>Hi folks.</p>
+
+{% if runlog %}
+    <ul>
+    {% for run in runlog %}
+        <li>{{ run.user }} : {{run.project}} : {{ run.note }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Run log is empty.</p>
+{% endif %}
+
 </div>
+
 
 {% endblock %}
