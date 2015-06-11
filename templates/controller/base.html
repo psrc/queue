@@ -26,14 +26,14 @@
 		               <ul class="nav pull-right">
 		                   {% if user.is_authenticated %}
 		                    <li class="navbar-text">Welcome, {{ user.username }}!</li>
-		                    <li><a href="/controller/logout/">Logout</a></li>
+		                    <li><a href="/logout/">Logout</a></li>
 		                   {% else %}
-		                    <li><a href="/controller/register/">Register</a></li>
-		                    <li><a href="/controller/login/">Login</a></li>
+		                    <li><a href="/register/">Register</a></li>
+		                    <li><a href="/login/">Login</a></li>
 		                   {% endif %}
 		               </ul>
 		               <ul class="nav">
-		                   <li><a href="/controller/about/">About</a></li>
+		                   <li><a href="/about/">About</a></li>
 		               </ul>
 		           </div>
 		           <!--/.nav-collapse -->
@@ -65,7 +65,7 @@
 
 		<footer>
 			<div class="container">
-				<p>&copy; Puget Sound Regional Council 2014</p>
+				<p>&copy; Puget Sound Regional Council 2015</p>
 			</dv>
 		</footer>
 
