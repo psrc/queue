@@ -23,7 +23,7 @@ def index(request):
     # Fetch the entire list of all runs ever run before
     vars['runlog'] = RunLog.objects.all()
 
-    return render_to_response('controller/index.html', vars)
+    return render_to_response('dashboard/index.html', vars)
 
 
 def launcher(request):
@@ -42,13 +42,13 @@ def launcher(request):
     else :
         form = SoundcastRuns()
 
-    return render_to_response('controller/launcher.html', username, context)
+    return render_to_response('dashboard/launcher.html', username, context)
 
 
 def about(request):
 	context = RequestContext(request)
 
-	return render_to_response('controller/about.html', context)
+	return render_to_response('dashboard/about.html', context)
 
 def register(request):
     ''' Register new site users '''
@@ -90,7 +90,7 @@ def register(request):
 
     # Render the template depending on the context.
     return render_to_response(
-        'controller/register.html',
+        'dashboard/register.html',
 	    {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
 	    context)
 
@@ -109,7 +109,7 @@ def user_login(request):
 			# Is accoutn active? It could have been disabled by the admin
 			if user.is_active:
 				login(request, user)
-				return HttpResponseRedirect('/controller/')
+				return HttpResponseRedirect('/')
 			else:
 				return HttpResponse('Your account is disabled. Please contact an administrator.')
 		else:
@@ -119,23 +119,23 @@ def user_login(request):
 
 	# Reguest is not HTTP POST, display the login form.
 	else:
-		return render_to_response('controller/login.html', {}, context)
+		return render_to_response('dashboard/login.html', {}, context)
 
 def user_logout(request):
 	logout(request)
 
 	# Return to homepage
-	return HttpResponseRedirect('/controller/')
+	return HttpResponseRedirect('/')
 
 def soundcast(request):
     # Load the soundcast page
     context = RequestContext(request)
-    return render_to_response('controller/soundcast.html', {}, context)
+    return render_to_response('dashboard/soundcast.html', {}, context)
 
 def fourkay(request):
     # Load the soundcast page
     context = RequestContext(request)
-    return render_to_response('controller/4k.html', {}, context)
+    return render_to_response('dashboard/4k.html', {}, context)
 
 def monitor(request):
     # Load the monitoring page
@@ -148,10 +148,10 @@ def monitor(request):
     code_dict = dispatcher.check_nodes(nodelist)
     results_dict = dispatcher.rd_check_nodes(code_dict)
 
-    return render_to_response('controller/monitor.html',
+    return render_to_response('dashboard/monitor.html',
     {'data': sorted(results_dict.iteritems())})
 
-#return render_to_response('controller/monitor.html', {}, context)
+#return render_to_response('/monitor.html', {}, context)
 
 def run_soundcast(request):
     # if this is a POST request we need to process the form data
@@ -167,9 +167,9 @@ def run_soundcast(request):
             # ...
             # redirect to a new URL:
             #return HttpResponseRedirect('/thanks/')
-            return render(request, 'controller/monitor.html', {'form': form})
+            return render(request, 'dashboard/monitor.html', {'form': form})
     # if a GET (or any other method) we'll create a blank form
     else:
         form = NameForm()
 
-    return render(request, 'controller/name.html', {'form': form})
+    return render(request, 'dashboard/name.html', {'form': form})

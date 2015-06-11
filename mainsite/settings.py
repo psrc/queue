@@ -15,7 +15,7 @@ SETTINGS_DIR = os.path.dirname(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
 PROJECT_PATH = os.path.abspath(PROJECT_PATH)
-DATABASE_PATH = os.path.join(PROJECT_PATH, 'controller.db')
+DATABASE_PATH = os.path.join(PROJECT_PATH, 'dashboard.db')
 TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 # Quick-start development settings - unsuitable for production
@@ -45,7 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'controller'
+    'dashboard'
 )
 
 TEMPLATE_DIRS = (
@@ -61,9 +61,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'dashboard.urls'
+ROOT_URLCONF = 'mainsite.urls'
 
-WSGI_APPLICATION = 'dashboard.wsgi.application'
+WSGI_APPLICATION = 'mainsite.wsgi.application'
 
 
 # Database

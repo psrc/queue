@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
                 ('tool_tag', models.CharField(max_length=64, db_index=True)),
                 ('inputs', models.CharField(max_length=2048)),
                 ('group', models.ForeignKey(to='auth.Group')),
-                ('project', models.ForeignKey(to='controller.Project')),
+                ('project', models.ForeignKey(to='dashboard.Project')),
             ],
             options={
                 'ordering': ['-start'],
@@ -101,7 +101,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='runlog',
             name='tool',
-            field=models.ForeignKey(to='controller.Tool'),
+            field=models.ForeignKey(to='dashboard.Tool'),
         ),
         migrations.AddField(
             model_name='runlog',
@@ -111,11 +111,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='node',
             name='tools',
-            field=models.ManyToManyField(to='controller.Tool'),
+            field=models.ManyToManyField(to='dashboard.Tool'),
         ),
         migrations.AddField(
             model_name='inputconfigurationvalue',
             name='container',
-            field=models.ForeignKey(to='controller.InputTypeDict'),
+            field=models.ForeignKey(to='dashboard.InputTypeDict'),
         ),
     ]

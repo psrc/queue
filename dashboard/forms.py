@@ -1,5 +1,5 @@
 from django import forms
-from controller.models import UserProfile, SoundcastRuns
+from dashboard.models import UserProfile, SoundcastRuns
 from django.contrib.auth.models import User
 
 class UserForm(forms.ModelForm):

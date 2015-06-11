@@ -1,4 +1,4 @@
-{% extends 'controller/base.html' %}
+{% extends 'dashboard/base.html' %}
 
 {% block title %}{{ category_name }}{% endblock %}
 
@@ -7,11 +7,11 @@
 
     	{% if registered %}
     	<strong>Thank you for registering!</strong>
-    	<a href="/controller/">Return to the homepage.</a><br />
+    	<a href="/dashboard/">Return to the homepage.</a><br />
     	{% else %}
     	Rango says: <strong>Register here!</strong><br />
 
-    	<form id="user_form" method="post" action="/controller/register/"
+    	<form id="user_form" method="post" action="/dashboard/register/"
     	    enctype="multipart/form-data">
 
     	    {% csrf_token %}
