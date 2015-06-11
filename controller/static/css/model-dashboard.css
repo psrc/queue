@@ -1,0 +1,27 @@
+/*!
+ * CSS tweaks for the PSRC Model Dashboard
+ *
+ */
+
+.navbar-button {
+  line-height: 40px;
+  color: white;
+  text-align: center;
+  background-color: #FF4422;
+  margin-bottom: 30px;
+}
+
+.navbar-button a {
+  color: white;
+}
+
+li.active  {
+  list-style-type: none;
+  margin-bottom: 3px;
+}
+
+li.nav-header  {
+  margin-top: 15px;
+  margin-left: 0px;
+  padding-left: 0px;
+}
