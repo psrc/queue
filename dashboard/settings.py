@@ -17,7 +17,6 @@ PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
 PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'controller.db')
 TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
-#CELERY_RESULT_BACKEND = "amqp"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
