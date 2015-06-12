@@ -4,20 +4,21 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
+from django_tables2 import RequestConfig
 
 from .forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
 from .models import RunLog
+from .tables import RunLogTable
 
 # Test interaction with model dispatcher
 import dispatcher
 hostname = 'PSRC3827'  #todo hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
 
-class IndexView(generic.ListView):
-    template_name = 'dashboard/index.html'
-    context_object_name = 'runlog'
-    def get_queryset(self):
-        """Return the runlog"""
-        return RunLog.objects.all()
+def index(request):
+    table = RunLogTable(RunLog.objects.all())
+    RequestConfig(request).configure(table)
+
+    return render(request, 'dashboard/index.html', {'runlog':table})
 
 
 def launcher(request):

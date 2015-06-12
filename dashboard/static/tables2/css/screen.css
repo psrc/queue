@@ -1,7 +1,7 @@
 table.paleblue {
     border-collapse: collapse;
     border-color: #CCC;
-    border: 1px solid #DDD;
+    border: none;
 }
 
 table.paleblue,
@@ -26,7 +26,6 @@ table.paleblue th {
     padding: 5px;
     line-height: 13px;
     border-bottom: 1px solid #EEE;
-    border-left: 1px solid #DDD;
     text-align: left;
 }
 
@@ -38,8 +37,7 @@ table.paleblue thead td:first-child {
 table.paleblue thead th,
 table.paleblue thead td {
     background: #FCFCFC url(../img/header-bg.png) left bottom repeat-x;
-    border-bottom: 1px solid #DDD;
-    padding: 2px 5px;
+    padding: 8px 8px;
     font-size: 11px;
     vertical-align: middle;
     color: #666;
@@ -47,7 +45,7 @@ table.paleblue thead td {
 
 table.paleblue thead th > a:link,
 table.paleblue thead th > a:visited {
-    color: #666;
+    color: #66c;
 }
 
 table.paleblue thead th.orderable > a {
@@ -62,7 +60,7 @@ table.paleblue thead th.orderable.desc > a {
 }
 
 table.paleblue tr.odd {
-    background-color: #EDF3FE;
+   background-color: #EEEEEE;
 }
 
 table.paleblue tr.even {

@@ -6,7 +6,7 @@ admin.autodiscover()
 from dashboard import views
 
 urlpatterns = patterns('',
-    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'about/$', views.about, name='about'),
