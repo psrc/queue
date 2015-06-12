@@ -4,16 +4,31 @@
  */
 
 .navbar-button {
-  line-height: 40px;
+  background: #d44937;
+  background-image: -webkit-linear-gradient(top, #d44937, #d04534);
+  background-image: -moz-linear-gradient(top, #d44937, #d04534);
+  background-image: -ms-linear-gradient(top, #d44937, #d04534);
+  background-image: -o-linear-gradient(top, #d44937, #d04534);
+  background-image: linear-gradient(to bottom, #d44937, #d04534);
+  -webkit-border-radius: 4;
+  -moz-border-radius: 4;
+  border-radius: 3px;
+  font-family: Arial;
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;  line-height: 40px;
   color: white;
   text-align: center;
-  background-color: #FF4422;
   margin-bottom: 30px;
 }
 
-.navbar-button a {
+.navbar-button:hover {
+  background: #b33c2e;
+  text-decoration: none;
   color: white;
 }
+
 
 li.active  {
   list-style-type: none;
