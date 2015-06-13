@@ -1,21 +1,20 @@
-# Copyright [2015] [Puget Sound Regional Council]
-
+# Copyright (c) 2015 Puget Sound Regional Council, Seattle WA USA
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # You may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #    http://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# This script manages model runs on a server by communicating with the PSRC Model Dashboard. 
-# It must be running for models runs to be initiated remotely. 
-
-# !python.exe
+#
+# This script manages model runs on a server by communicating with the PSRC Model Dashboard.
+# It must be running for models runs to be initiated remotely.
+#
 # ===========================
 import os
 import Pyro4
@@ -28,124 +27,140 @@ import threading
 import shutil
 import logging
 
+logging.basicConfig(filename='node.log', level=logging.DEBUG)
 
-logging.basicConfig(filename='node.log',level=logging.DEBUG)
-
-class Testcase(object):
+class Node(object):
+    busy = False
+    command = None
+    p = None
+    cwd = None
+    returncode = -1
 
     def __init__(self):
-        self.node_state = 0
-
-    def check_node_state(self):
-        ''' Pyro won't expose private methods, so we need a public method to check node state '''
-        return self.node_state
-
-    @Pyro4.oneway   # decorator implies we don't wait for return before executing next code lines
-    def runtest(self):
-        ''' Example test function that write text to file, runs for several minutes '''
-        self.node_state = 1         # Node is busy
-        for i in xrange(20):
-            print "Here is some text: line " + str(i)
-            time.sleep(30)          # Stretch this out so we can test a continual process
-            with open('example_output.txt', 'w') as f:
-                f.write('There is also some text in the file.')
-        self.node_state = 0         # Node is free for now
+        self.name = socket.gethostname()
+        logging.info('##############################################')
+        logging.info('i am: '+self.name)
 
 
+    def is_busy(self):
+        return self.busy
 
-    @Pyro4.oneway
-    def runmodel(self, runid):
-        ''' Start fresh model run '''
-        # Create new directory 
-        try:
-            dirname = 'soundcast_' + str(runid)
-            os.mkdir(dirname)
-            os.chdir(dirname)
-        except:
-            return "Unable to create directory"
-        
-        # Clone the Soundcast repository
-        repo = 'https://github.com/psrc/soundcast'
-        returncode = os.system("git clone " + repo)
-        if returncode == 0:
-            logging.info('Cloned latest Soundcast repository')
+    def is_available(self):
+        return not self.busy
+
+    def kill(self):
+        '''
+        Kill a running command, if there is one
+        '''
+        if self.p:
+            logging.info('terminating: '+str(self.command))
+            self.p.terminate()
         else:
-            logging.error('Unable to clone into Soundcast repo: returncode ' + str(returncode))
+            logging.info('nothing to terminate.')
 
-        # Execute soundcast code
-        os.chdir('soundcast')
-        stdout_file = open('stdout.log', 'w')
-        stderr_file = open('stderr.log', 'w')
-        returncode = subprocess.call([sys.executable, 'run_soundcast.py'], stdout=stdout_file, stderr=stderr_file)
-        stdout_file.close()
-        stderr_file.close()
-        if returncode == 0:
-            logging.info('Completed run_soundcast.py')
+
+    def status(self):
+        '''
+        Get node status
+        Returns tuple: (returncode, busy, command, working_dir)
+        returncode=-1 if process has not returned yet
+        '''
+        return (self.returncode, self.busy, self.command, self.cwd)
+
+
+    def runandwait(self, command, cwd=None):
+        '''
+        Spawn a subprocess. Wait for task to finish, and return the process returncode.
+        '''
+        self.start(command, cwd, wait=True)
+
+
+    def start(self, command, cwd=None, wait=False):
+        '''
+        Spawn a subprocess. Return immediately.
+        '''
+        if self.busy:
+            logging.error('# Already busy, running: '+str(command))
+            raise RuntimeError("Already busy")
+            return
+
+        logging.info('----------------------------------------------')
+        logging.info('received command: '+str(command))
+
+        self.busy = True
+        self.command = command
+        self.cwd = cwd
+        self.returncode = -1
+
+        # Launch the process, and save a handle to it in self.p
+        self.popenAndCall(self.onExit, command, cwd, wait)
+
+
+    def onExit(self, returncode):
+        """
+        Callback function which is run when a subprocess is completed.
+        Resets busy flag and gets node ready for the next run.
+        """
+        logging.info("ON-EXIT: return code "+ str(returncode) + " : " + str(self.command))
+
+        self.returncode = returncode
+        self.busy = False
+        self.p = None
+        self.command = None
+        self.cwd = None
+
+        if (returncode>0):
+            raise RuntimeError('Failed: return code '+str(returncode))
+
+
+    def popenAndCall(self, onExit, command, cwd, wait):
+        """
+        Runs the given args in a subprocess.Popen, and then calls the function
+        onExit when the subprocess completes.
+        onExit is a callable object, and popenArgs is a list/tuple of args that
+        would give to subprocess.Popen.
+        """
+        def runIt(onExit, command):
+            rtncode = -1
+            try:
+                self.p = subprocess.Popen(command, cwd=cwd)
+                self.p.wait()
+                rtncode = self.p.returncode
+            except:
+                rtncode = 8
+            finally:
+                onExit(rtncode)
+
+            return
+
+        if wait:
+            runIt(onExit, command)
         else:
-            logging.error('Error running soundcast: returncode ' + str(returncode))
+            thread = threading.Thread(target=runIt, args=(onExit, command))
+            thread.start()
+
+
+def runtests():
+    n = Node()
+
+    cmd = ["ipconfig.exe"]
+    n.start(cmd, r"c:\users\zbilly")
+    time.sleep(1)
+    print n.status()
+    n.start(cmd)
+    time.sleep(1)
+    n.kill()
+
 
 def main():
+    n = Node()
 
-    logging.info('Started node on %s' %  socket.gethostname())
-    logging.info("initializing services... Server type: %s" % Pyro4.config.SERVERTYPE)
+    # Start Pyro -- requires one Pyro Name server on network somewhere
+    # To start a Pyro Name Server, do "pyro4-ns.exe -n [hostname]"
 
-        # Start a name server and a broadcast server
-    nameserverUri, nameserverDaemon, broadcastServer = Pyro4.naming.startNS(host=socket.gethostname())
-    assert broadcastServer is not None, "Expecting a broadcast server to be created"
+    Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
 
-    logging.info("created nameserver, uri: %s" % nameserverUri)
-    logging.info("ns daemon location string: %s" % nameserverDaemon.locationStr)
-    logging.info("ns daemon sockets: %s" % nameserverDaemon.sockets)
-    logging.info("bc server socket: %s (fileno %d)" % (broadcastServer.sock, broadcastServer.fileno()))
-
-    # Create a Pyro daemon
-    pyrodaemon = Pyro4.Daemon(host=socket.gethostname())
-    logging.info("daemon location string: %s" % pyrodaemon.locationStr)
-    logging.info("daemon sockets: %s" % pyrodaemon.sockets)
-
-    # Register the server object with the daemon
-    serveruri = pyrodaemon.register(Testcase())
-    logging.info("server uri: %s" % serveruri)
-
-    # Register object with the embedded nameserver directly
-    nameserverDaemon.nameserver.register(socket.gethostname(), serveruri)
-
-    logging.info("")
-
-    # Wait to be called by dispatcher
-    while True:
-        print("Waiting for events...")
-        # Create sets of the expected socket objects
-        nameserverSockets = set(nameserverDaemon.sockets)
-        pyroSockets = set(pyrodaemon.sockets)
-        rs = [broadcastServer]  # only the broadcast server is directly usable as a select() object
-        rs.extend(nameserverSockets)
-        rs.extend(pyroSockets)
-        rs,_,_ = select.select(rs,[],[],3)
-        eventsForNameserver = []
-        eventsForDaemon = []
-        for s in rs:
-            if s is broadcastServer:
-                print("Broadcast server received a request")
-                broadcastServer.processRequest()
-                # Should there just be a break here? Another branch that just starts logging model progress?
-                #break
-            elif s in nameserverSockets:
-                eventsForNameserver.append(s)
-            elif s in pyroSockets:
-                eventsForDaemon.append(s)
-        if eventsForNameserver:
-            print("Nameserver received a request")
-            nameserverDaemon.events(eventsForNameserver)
-        if eventsForDaemon:
-            print("Daemon received a request")
-            pyrodaemon.events(eventsForDaemon)
-
-
-    nameserverDaemon.close()
-    broadcastServer.close()
-    pyrodaemon.close()
-    print("done")
 
 if __name__ == '__main__':
+    #runtests()
     main()
