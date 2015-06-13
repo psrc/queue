@@ -156,14 +156,28 @@ def runtests():
     time.sleep(1)
     n.kill()
 
+def set_high_priority():
+    import platform
+    if platform.system()=='Windows':
+        print 'Setting Windows process priority'
+        import win32api, win32process, win32con
+        pid = win32api.GetCurrentProcessId()
+        handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
+        win32process.SetPriorityClass(handle, win32process.HIGH_PRIORITY_CLASS)
+
 
 def main():
-    n = Node()
+    # Run node code at extra-high priority, so it stays responsive even
+    # while models are running.
+    set_high_priority()
 
     # Start Pyro -- requires one Pyro Name server on network somewhere
-    # To start a Pyro Name Server, do "pyro4-ns.exe -n [hostname]"
-
-    Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
+    n = Node()
+    try:
+        Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
+    except:
+        print('\n###\nNo Pyro name server found on local network.')
+        print("To start a Pyro Name Server, do 'pyro4-ns.exe -n [hostname]'")
 
 
 if __name__ == '__main__':
