@@ -27,7 +27,7 @@ import threading
 import shutil
 import logging
 
-logging.basicConfig(filename='node.log', level=logging.DEBUG)
+logger = logging.getLogger(socket.gethostname())
 
 class Node(object):
     busy = False
@@ -38,8 +38,8 @@ class Node(object):
 
     def __init__(self):
         self.name = socket.gethostname()
-        logging.info('##############################################')
-        logging.info('i am: '+self.name)
+        logger.info('##############################################')
+        logger.info('i am: '+self.name)
 
 
     def is_busy(self):
@@ -53,10 +53,10 @@ class Node(object):
         Kill a running command, if there is one
         '''
         if self.p:
-            logging.info('terminating: '+str(self.command))
+            logger.info('terminating: '+str(self.command))
             self.p.terminate()
         else:
-            logging.info('nothing to terminate.')
+            logger.info('nothing to terminate.')
 
 
     def status(self):
@@ -80,12 +80,12 @@ class Node(object):
         Spawn a subprocess. Return immediately.
         '''
         if self.busy:
-            logging.error('# Already busy, running: '+str(command))
+            logger.error('# Already busy, running: '+str(command))
             raise RuntimeError("Already busy")
             return
 
-        logging.info('----------------------------------------------')
-        logging.info('received command: '+str(command))
+        logger.info('----------------------------------------------')
+        logger.info('received command: '+str(command))
 
         self.busy = True
         self.command = command
@@ -101,7 +101,7 @@ class Node(object):
         Callback function which is run when a subprocess is completed.
         Resets busy flag and gets node ready for the next run.
         """
-        logging.info("ON-EXIT: return code "+ str(returncode) + " : " + str(self.command))
+        logger.info("ON-EXIT: return code "+ str(returncode) + " : " + str(self.command))
 
         self.returncode = returncode
         self.busy = False
@@ -157,6 +157,10 @@ def runtests():
     n.kill()
 
 def set_high_priority():
+    '''
+    Run node code at extra-high priority, so it stays responsive even
+    while models are running.
+    '''
     import platform
     if platform.system()=='Windows':
         print 'Setting Windows process priority'
@@ -166,10 +170,26 @@ def set_high_priority():
         win32process.SetPriorityClass(handle, win32process.HIGH_PRIORITY_CLASS)
 
 
+def setup_logger():
+    logger.setLevel(logging.DEBUG)
+
+    fh = logging.FileHandler('spam.log')
+    fh.setLevel(logging.DEBUG)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter('%(asctime)s/%(name)s %(levelname)s %(message)s')
+
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+
 def main():
-    # Run node code at extra-high priority, so it stays responsive even
-    # while models are running.
     set_high_priority()
+    setup_logger()
 
     # Start Pyro -- requires one Pyro Name server on network somewhere
     n = Node()
