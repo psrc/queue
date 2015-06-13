@@ -50,6 +50,7 @@ def launcher(request):
 def nodes(request):
     with Pyro4.locateNS() as ns:
         nodes = ns.list(regex='^(?!.*NameServer).*$').keys()
+        nodes.sort()
 
         return JsonResponse({'nodes':nodes})
 

@@ -1,32 +1,45 @@
 {% extends 'dashboard/base.html' %}
+{% load static %}
 
 {% block title %}{{ category_name }}{% endblock %}
 
 {% block body_block %}
 
-<div class="hero-unit">
-    <h3>MODEL RUN LAUNCHER</h3>
-    <p>Pick a model to run from these options:</p>
-</div>
+<h3>MODEL RUN LAUNCHER</h3>
+<p>Pick a model to run from these options:</p>
+<hr/>
 
+<table>
+  <tr>
+    <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
+        <img width=96 src="{% static 'img/4k.png' %}"/></td>
+    <td style="vertical-align:top;padding-bottom:35px;">
+        <h4>4K</h4>
+        <p>Trip-based travel model
+        <p><a class="btn" href="/4k/">Run 4K »</a></p>
+    </td>
+  </tr>
 
+  <tr>
+    <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
+        <img width=96 src="{% static 'img/cat.png' %}"/></td>
+    <td style="vertical-align:top;padding-bottom:35px;">
+        <h4>SOUNDCAST</h4>
+        <p>Activity-based travel model</p>
+        <p><a class="btn" href="/soundcast/">Run Soundcast »</a></p>
+    </td>
+  </tr>
 
-<div class="span3">
-<h3>4K</h3>
-<p>Trip-based travel model
-<p><a class="btn" href="/4k/">Run 4k »</a></p>
-</div>
+  <tr>
+    <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
+        <img width=96 src="{% static 'img/urbansim.png' %}"/></td>
+    <td style="vertical-align:top;padding-bottom:35px;">
+        <h4>URBANSIM</h4>
+        <p>Land-use model</p>
+        <p><a class="btn" href="http://www.psrc.org/data/models/urbansim/">Run Urbansim »</a></p>
+    </td>
+  </tr>
 
-<div class="span3">
-<h3>SOUNDCAST</h3>
-<p>Activity-based travel model</p>
-<p><a class="btn" href="/soundcast/">Run Soundcast »</a></p>
-</div>
-
-<div class="span3">
-<h3>URBANSIM</h3>
-<p>Land-use model</p>
-<p><a class="btn" href="http://www.psrc.org/data/models/urbansim/">Run Urbansim »</a></p>
-</div>
+</table>
 
 {% endblock %}

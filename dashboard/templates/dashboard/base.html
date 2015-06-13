@@ -49,6 +49,14 @@
 		            <div class="well sidebar-nav">
 		                <a href="/launcher" class="navbar-button">NEW RUN&hellip;</a>
 
+                        <li class="nav-header">Documentation</li>
+		                <li class="active"><a href="http://www.psrc.org">Dashboard Users Guide</a></li>
+		                <li class="active"><a href="http://psrc.github.io">4K</a> - <a href="http://psrc.github.io">SoundCast</a> - <a href="http://psrc.github.io">Urbansim</a></li>
+
+		                <li class="nav-header">Links</li>
+		                <li class="active"><a href="http://www.psrc.org">PSRC Home Page</a></li>
+		                <li class="active"><a href="http://psrc.github.io">I/O: PSRC Data Blog</a></li>
+
                         <li class="nav-header">Nodes</li>
 
                         <table id="node_table">
@@ -59,17 +67,11 @@
                         {% endfor %}
                         </table>
 
-                        <li class="nav-header">Documentation</li>
-		                <li class="active"><a href="http://www.psrc.org">Dashboard Users Guide</a></li>
-		                <li class="active"><a href="http://psrc.github.io">4K</a> - <a href="http://psrc.github.io">SoundCast</a> - <a href="http://psrc.github.io">Urbansim</a></li>
-
-		                <li class="nav-header">Links</li>
-		                <li class="active"><a href="http://www.psrc.org">PSRC Home Page</a></li>
-		                <li class="active"><a href="http://psrc.github.io">I/O: PSRC Data Blog</a></li>
-		            </div>
+                    </div>
 		            <!--/.well -->
 		        </div>
-		        <div class="span9" style="float:left; padding-right:20px;>
+
+		        <div class="container"><div class="span9" style="float:left; padding-right:20px;">
 		            {% block body_block %}
 		            {% endblock %}
 		        </div>
