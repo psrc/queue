@@ -49,6 +49,16 @@
 		            <div class="well sidebar-nav">
 		                <a href="/launcher" class="navbar-button">NEW RUN&hellip;</a>
 
+                        <li class="nav-header">Nodes</li>
+
+                        <table id="node_table">
+                        {% for node,state,label in nodes %}
+
+                          <tr><td class="active navbar-button {{state}}">{{label}}</td><td class="active">{{node}}</td></tr>
+
+                        {% endfor %}
+                        </table>
+
                         <li class="nav-header">Documentation</li>
 		                <li class="active"><a href="http://www.psrc.org">Dashboard Users Guide</a></li>
 		                <li class="active"><a href="http://psrc.github.io">4K</a> - <a href="http://psrc.github.io">SoundCast</a> - <a href="http://psrc.github.io">Urbansim</a></li>
@@ -80,5 +90,6 @@
 
         <script src="{% static 'js/jquery.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/model-dashboard.js' %}"></script>
     </body>
 </html>

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
@@ -10,15 +10,22 @@ from .forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
 from .models import RunLog
 from .tables import RunLogTable
 
+import Pyro4
+
 # Test interaction with model dispatcher
 import dispatcher
-hostname = 'PSRC3827'  #todo hard code this for now, eventually we might want to make a subprocess to run the dispatcher directly
+from socket import gethostname
+hostname = gethostname()
 
 def index(request):
     table = RunLogTable(RunLog.objects.all())
     RequestConfig(request).configure(table)
 
-    return render(request, 'dashboard/index.html', {'runlog':table})
+    # Fetch active nodes - every key *except* the NameServer
+    statuses = []
+
+    return render(request, 'dashboard/index.html',
+                    {'runlog':table, 'nodes':statuses} )
 
 
 def launcher(request):
@@ -38,6 +45,26 @@ def launcher(request):
         form = SoundcastRuns()
 
     return render_to_response('dashboard/launcher.html', username, context)
+
+
+def nodes(request):
+    with Pyro4.locateNS() as ns:
+        nodes = ns.list(regex='^(?!.*NameServer).*$').keys()
+
+        return JsonResponse({'nodes':nodes})
+
+
+def nodestatus(request, server_id):
+    try:
+        n = Pyro4.Proxy('PYRONAME:' + server_id)
+        state = n.is_busy() and "status-in-use" or "status-idle"
+        label = n.is_busy() and "IN USE" or "OK"
+    except:
+        # if it can't connect, big red x
+        label = "ERR"
+        state = "status-err"
+
+    return JsonResponse({'node':server_id, 'state':state, 'label':label})
 
 
 def about(request):
