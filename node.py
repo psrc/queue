@@ -122,16 +122,21 @@ class Node(object):
         """
         def runIt(onExit, command):
             rtncode = -1
+
+            # Put log files in cwd folder
+            pout = 'stdout.log'
+            if cwd:
+                pout = os.path.join(cwd, pout)
+
             try:
-                self.p = subprocess.Popen(command, cwd=cwd)
-                self.p.wait()
-                rtncode = self.p.returncode
+                with open(pout, 'a') as file_out:
+                    self.p = subprocess.Popen(command, cwd=cwd, stdout=file_out, stderr=subprocess.STDOUT)
+                    self.p.wait()
+                    rtncode = self.p.returncode
             except:
                 rtncode = 8
             finally:
                 onExit(rtncode)
-
-            return
 
         if wait:
             runIt(onExit, command)
