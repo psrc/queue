@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django_tables2 import RequestConfig
 
-from .forms import UserForm, UserProfileForm, SoundcastRuns, NameForm
+from .forms import UserForm, UserProfileForm, NameForm
+from .forms import SoundcastRuns, SoundcastRunsForm
 from .models import RunLog
 from .tables import RunLogTable
 
@@ -72,6 +73,7 @@ def about(request):
 	context = RequestContext(request)
 
 	return render_to_response('dashboard/about.html', context)
+
 
 def register(request):
     ''' Register new site users '''
@@ -150,11 +152,6 @@ def user_logout(request):
 	# Return to homepage
 	return HttpResponseRedirect('/')
 
-def soundcast(request):
-    # Load the soundcast page
-    context = RequestContext(request)
-    return render_to_response('dashboard/soundcast.html', {}, context)
-
 def fourkay(request):
     # Load the soundcast page
     context = RequestContext(request)
@@ -174,25 +171,33 @@ def monitor(request):
     return render_to_response('dashboard/monitor.html',
     {'data': sorted(results_dict.iteritems())})
 
-#return render_to_response('/monitor.html', {}, context)
 
-def run_soundcast(request):
+def soundcast(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
+        form = SoundcastRunsForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
+            print 'form is valid!'
+            print form.cleaned_data
+            config = form.cleaned_data['configuration']
+            config.charset='utf16'
+            for line in config:
+                print line
 
-            instance = dispatcher.StartModel()
-            instance.start_model(hostname='PSRC3827', runid=form.cleaned_data['your_name'])
+            #instance = dispatcher.StartModel()
+            #instance.start_model(hostname='PSRC3827', runid=form.cleaned_data['your_name'])
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
             #return HttpResponseRedirect('/thanks/')
             return render(request, 'dashboard/monitor.html', {'form': form})
+        else:
+            print "invalid form is invalid."
+
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = NameForm()
+        form = SoundcastRunsForm()
 
-    return render(request, 'dashboard/name.html', {'form': form})
+    return render(request, 'dashboard/soundcast.html', {'form': form})

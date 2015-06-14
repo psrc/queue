@@ -86,3 +86,10 @@ li.nav-header  {
   margin-left: 0px;
   padding-left: 0px;
 }
+
+ul,li .errorlist {
+  color: red;
+  list-style-type: none;
+  margin-left: 0px; margin-bottom: 0px;
+  font-size: small;
+}

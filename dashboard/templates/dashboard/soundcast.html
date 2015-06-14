@@ -13,15 +13,14 @@
         <h3>RUN SOUNDCAST</h3>
 
         <p>PSRC's activity-based travel model. Ahoy!</p>
+    </td></tr>
+</table>
 
-        <form action="run-sc/" method="post">
-            {% csrf_token %}
-            <label for="your_name">Run ID: </label>
-            <input id="your_name" type="text" name="your_name" value="{{ current_name }}">
-            <input type="submit" value="Start Run">
-        </form>
+<form style="padding-left:108px;" action="/soundcast/" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Start Run">
+</form>
 
-    </td>
-</tr></table>
 
 {% endblock %}

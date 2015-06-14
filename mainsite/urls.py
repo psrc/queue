@@ -17,7 +17,6 @@ urlpatterns = patterns('',
     url(r'nodes/$', views.nodes, name='nodes'),
     url(r'nodes/(?P<server_id>[A-Za-z0-9_]+)/$', views.nodestatus, name='nodestatus'),
     url(r'register/$', views.register, name='register'),
-    url(r'run-sc/$', views.run_soundcast, name='run_soundcast'),
     url(r'soundcast/$', views.soundcast, name='soundcast'),
     url(r'4k/$', views.fourkay, name='fourkay'),
 )
