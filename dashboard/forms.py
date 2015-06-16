@@ -38,5 +38,5 @@ class SoundcastRunsForm(forms.Form):
     notes = forms.CharField(label='Run notes', max_length=512, required=False)
     tag = forms.CharField(label='Git tag', max_length=64)
     configuration = forms.FileField(label='Input configuration',
-    	validators=[is_valid_file])
+    	validators=[is_valid_file], required=False)
 

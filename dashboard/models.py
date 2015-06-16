@@ -58,13 +58,12 @@ class Project(models.Model):
 
 
 class RunLog(models.Model):
-    user = models.ForeignKey(User)
-    group = models.ForeignKey(Group)
-    project = models.ForeignKey(Project, null=True, blank=True)
+    user = models.ForeignKey(User, related_name='created_by')
+    project = models.CharField('project', max_length=128, null=True)
     series = models.CharField(max_length=3, blank=True)
     note = models.CharField(max_length=2048, blank=True)
-    status = models.IntegerField(db_index=True)
-    start = models.DateTimeField('started', db_index=True)
+    status = models.IntegerField(db_index=True, default=-1)
+    start = models.DateTimeField('started', auto_now_add = True)
     duration = models.DurationField(blank=True, null=True)
     tool = models.ForeignKey(Tool)
     tool_tag = models.CharField('tag', max_length=64, db_index=True, blank=True)
@@ -72,7 +71,7 @@ class RunLog(models.Model):
 
     def __unicode__(self):
         if (self.project):
-            return '' + self.project.name + ' - ' + self.series
+            return '' + self.project+ ' - ' + self.series
         else:
             return 'Run ' + str(self.id) + ' - ' + str(self.user)
 

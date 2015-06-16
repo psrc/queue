@@ -181,18 +181,14 @@ def soundcast(request):
         if form.is_valid():
             print 'form is valid!'
             print form.cleaned_data
-            config = form.cleaned_data['configuration']
-            config.charset='utf16'
-            for line in config:
-                print line
 
-            #instance = dispatcher.StartModel()
-            #instance.start_model(hostname='PSRC3827', runid=form.cleaned_data['your_name'])
-            # process the data in form.cleaned_data as required
-            # ...
+            import dashboard.plugins.soundcast as sc
+            tool = sc.Plugin(request, form.cleaned_data)
+            tool.run_model()
+
+            #return render(request, 'dashboard/monitor.html', {'form': form})
             # redirect to a new URL:
-            #return HttpResponseRedirect('/thanks/')
-            return render(request, 'dashboard/monitor.html', {'form': form})
+            return HttpResponseRedirect('/')
         else:
             print "invalid form is invalid."
 

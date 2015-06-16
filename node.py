@@ -40,6 +40,7 @@ class Node(object):
         self.name = socket.gethostname()
         logger.info('##############################################')
         logger.info('i am: '+self.name)
+        logger.info('working dir: '+os.getcwd())
 
 
     def is_busy(self):
@@ -173,7 +174,7 @@ def set_high_priority():
 def setup_logger():
     logger.setLevel(logging.DEBUG)
 
-    fh = logging.FileHandler('spam.log')
+    fh = logging.FileHandler('node.log')
     fh.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler()
