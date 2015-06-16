@@ -5,12 +5,14 @@ from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login, logout
 from django.views import generic
 from django_tables2 import RequestConfig
+from django.utils import timezone
 
 from .forms import UserForm, UserProfileForm, NameForm
 from .forms import SoundcastRuns, SoundcastRunsForm
 from .models import RunLog
 from .tables import RunLogTable
 
+import datetime
 import Pyro4
 
 # Test interaction with model dispatcher
@@ -171,6 +173,29 @@ def monitor(request):
     return render_to_response('dashboard/monitor.html',
     {'data': sorted(results_dict.iteritems())})
 
+def runlog(request, run_id=None):
+    '''Post: Update runlog status
+    '''
+    #todo This is WRONG! -- I'm using a GET instead of a POST, and I'm changing the database
+    # This breaks the REST paradigm, but Django is blocking POST because of cross-site-request-forgery
+    # I think.  I need to fix this, but I'm hacking it here for now because, time.
+
+    run = RunLog.objects.get(id=int(run_id))
+
+    # update status
+    status = request.GET['status'][0]
+    run.status = int(status)
+
+    # Calculate duration
+    rawtime = timezone.now() - run.start
+    timedelta = datetime.timedelta(days=rawtime.days, seconds=rawtime.seconds)
+    run.duration = timedelta
+
+    # Save in Db
+    run.save()
+
+    return HttpResponseRedirect('/')
+    #return render(request, 'dashboard/index.html', {'form': form})
 
 def soundcast(request):
     # if this is a POST request we need to process the form data
@@ -179,7 +204,6 @@ def soundcast(request):
         form = SoundcastRunsForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
-            print 'form is valid!'
             print form.cleaned_data
 
             import dashboard.plugins.soundcast as sc

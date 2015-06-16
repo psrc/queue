@@ -3,10 +3,9 @@
 
 import Pyro4
 import logging, socket
+from datetime import datetime
 
 from dashboard.models import RunLog, Tool
-
-logger = logging.getLogger(socket.gethostname())
 
 # SOUNDCAST tool
 class Plugin(object):
@@ -21,24 +20,28 @@ class Plugin(object):
         Clone soundcast into the working folder, then run the model commands in that folder.
         '''
 
-        series = self.get_next_series(self.project)
         tool = Tool.objects.get(name='SoundCast')
+        series = self.get_next_series(self.project)
 
-        self.addLogEntry(self.project, series, tool, self.tag)
-
+        # attempt to dial a node, and spawn the run
         n = Pyro4.Proxy('PYRONAME:PSRC3826')
 
-        logger.info('spawning')
-        n.runandwait('git clone git@github.com:psrc/model-dashboard.git \"{}/{}\"'.format(self.project, series))
-        #n.start('python.exe run_soundcast.py', self.project)
-        print 'done'
+        run = self.addLogEntry(self.project, series, tool, self.tag)
+
+        n.runandwait('git clone git@github.com:psrc/model-dashboard.git \"{}/{}\"'.format(self.project, series), cwd=None, run_id=run)
+
+
 
     def addLogEntry(self, project, series, tool, tag):
-        logger.info('adding log entry: ' + self.project + '/' + series)
-
-        run = RunLog(user=self.request.user,
-            project=project, series=series, tool=tool, tool_tag=tag)
+        '''
+        Add an entry to the run log for this project
+        Returns the id of the entry
+        '''
+        run = RunLog(user=self.request.user, project=project,
+            series=series, tool=tool, tool_tag=tag, start=datetime.now())
         run.save()
+
+        return run.id
 
 
     def get_next_series(self, project):
@@ -63,7 +66,5 @@ class Plugin(object):
         if (a): series += chr(a+capital_a - 1)
         series += chr(b+capital_a)
         series += chr(c+capital_a)
-
-        print "series:", series
 
         return series

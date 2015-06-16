@@ -26,6 +26,7 @@ import select
 import threading
 import shutil
 import logging
+import requests
 
 logger = logging.getLogger(socket.gethostname())
 
@@ -35,6 +36,7 @@ class Node(object):
     p = None
     cwd = None
     returncode = -1
+    run_id = None
 
     def __init__(self):
         self.name = socket.gethostname()
@@ -69,14 +71,15 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runandwait(self, command, cwd=None):
+    def runandwait(self, command, cwd=None, run_id=None):
         '''
         Spawn a subprocess. Wait for task to finish, and return the process returncode.
         '''
-        self.start(command, cwd, wait=True)
+        logger.info("runandwait: run_id is " + str(run_id))
+        self.start(command, cwd, wait=True, run_id=run_id)
 
 
-    def start(self, command, cwd=None, wait=False):
+    def start(self, command, cwd=None, wait=False, run_id=None):
         '''
         Spawn a subprocess. Return immediately.
         '''
@@ -87,11 +90,13 @@ class Node(object):
 
         logger.info('----------------------------------------------')
         logger.info('received command: '+str(command))
+        logger.info("start: run_id is " + str(run_id))
 
         self.busy = True
         self.command = command
         self.cwd = cwd
         self.returncode = -1
+        self.run_id=run_id
 
         # Launch the process, and save a handle to it in self.p
         self.popenAndCall(self.onExit, command, cwd, wait)
@@ -109,6 +114,15 @@ class Node(object):
         self.p = None
         self.command = None
         self.cwd = None
+
+        # Update run log with status
+        if self.run_id:
+            data = {'status': returncode}
+            url = 'http://localhost/runlog/'+str(self.run_id)
+            logger.info(url)
+            response = requests.get(url, params=data)
+
+            logger.info('updated status: response ' + str(response))
 
         if (returncode>0):
             raise RuntimeError('Failed: return code '+str(returncode))
