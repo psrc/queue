@@ -48,8 +48,26 @@ class Node(object):
     def is_busy(self):
         return self.busy
 
+
     def is_available(self):
         return not self.busy
+
+
+    def create_dir(self, path, subdir=None):
+        '''
+        Create a directory, with optional subdirectory
+        '''
+        fullpath = path
+        if subdir:
+            fullpath = os.path.join(path, subdir)
+
+        try:
+            os.makedirs(fullpath)
+        except OSError as exc: # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(fullpath):
+                pass
+            else: raise
+
 
     def kill(self):
         '''
@@ -69,6 +87,22 @@ class Node(object):
         returncode=-1 if process has not returned yet
         '''
         return (self.returncode, self.busy, self.command, self.cwd)
+
+
+    def runscript(self, lines, project, series, cwd=None, run_id=None):
+        '''
+        Take a list of script lines, and run them
+        '''
+        self.create_dir(project, series)
+        for line in lines:
+            if line.startswith('::'): continue
+            if len(line.strip())==0: continue
+            logger.info('RUN: '+line)
+            self.runandwait(line, cwd, run_id)
+            if self.returncode>0:
+                logger.error('ERR ' + str(returncode))
+                break
+            pass
 
 
     def runandwait(self, command, cwd=None, run_id=None):

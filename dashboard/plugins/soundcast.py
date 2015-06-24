@@ -15,20 +15,25 @@ class Plugin(object):
         self.project = data['project']
         self.tag = data['tag']
 
+
     def run_model(self):
         '''
-        Clone soundcast into the working folder, then run the model commands in that folder.
+        yeah run that model!
         '''
-
         tool = Tool.objects.get(name='SoundCast')
         series = self.get_next_series(self.project)
 
-        # attempt to dial a node, and spawn the run
-        n = Pyro4.Proxy('PYRONAME:PSRC3826')
+        # fetch script lines
+        lines = open('dashboard/plugins/soundcast.script').readlines()
 
+        #todo - attempt to dial a node
+        n = Pyro4.Proxy('PYRONAME:Yoga')
+
+        # create the log entry
         run = self.addLogEntry(self.project, series, tool, self.tag)
 
-        n.runandwait('git clone git@github.com:psrc/model-dashboard.git \"{}/{}\"'.format(self.project, series), cwd=None, run_id=run)
+        # and run the fluffy
+        n.runscript(lines, self.project, series, cwd=None, run_id=run)
 
 
 
@@ -51,6 +56,7 @@ class Plugin(object):
         num_projects = RunLog.objects.filter(project=project).count()
         series = self.get_series_from_count(num_projects)
         return series
+
 
     def get_series_from_count(self, count):
         '''
