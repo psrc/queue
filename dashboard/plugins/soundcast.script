@@ -1,9 +1,13 @@
-# Tool script. Put yer stuff here
-# receives some env vars like %CWD%, %TMPFILE% from the form
-# The script is run in $CWD, which is autocreated by the node on startup
-# ----------------------------------------------------------------------
+@echo off
 
-git clone git@github.com:psrc/soundcast.git .
+::Tool script. Put yer stuff here
+:: receives some env vars like %CWD%, %TMPFILE% from the form
+:: The script is run in $CWD, which is autocreated by the node on startup
+:: ----------------------------------------------------------------------
+
+git clone git@github.com:psrc/soundcast.git
+
+cd soundcast
 git checkout %TAG%
 
 if defined TMPFILE move /Y "%TMPFILE%" .

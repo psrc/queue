@@ -94,43 +94,32 @@ class Node(object):
         Take a list of script lines, and run them in a unique folder.
         Folder name formed from project & series.
         '''
+        logger.info('----------------------------------------------')
+        logger.info('Runscript called!')
+
         self.create_dir(project, series)
-        logger.info('Starting run!')
 
         # Set up environment variables for command substitution
         replacements = {}
         if tag: replacements['%TAG%'] = str(tag)
 
-        for line in lines:
-            if line.startswith('::'): continue
-            if line.startswith('#'): continue
+        # Write script file
+        filepath = os.path.join(project, series, 'run.bat')
+        with open(filepath, 'w') as script:
+            script.writelines(lines)
 
-            cmd = line.strip()
-            if len(cmd)==0: continue
-
-            # Expand replacement variables
-            for k,v in replacements.iteritems():
-                cmd = cmd.replace(k,v)
-
-            logger.info('RUN: '+cmd)
-
-            self.runandwait(cmd, project, series, run_id)
-            if self.returncode>0:
-                logger.error('ERR ' + str(self.returncode))
-                break
-
-        logger.info('done!')
+        cmd = 'run.bat'
+        self.start(cmd, project, series, run_id)
 
 
     def runandwait(self, command, project, series, run_id=None):
         '''
         Spawn a subprocess. Wait for task to finish, and return the process returncode.
         '''
-        logger.info("runandwait: run_id is " + str(run_id))
-        self.start(command, project, series, wait=True, run_id=run_id)
+        self.start(command, project, series, run_id=run_id, wait=True)
 
 
-    def start(self, command, project, series, wait=False, run_id=None):
+    def start(self, command, project, series, run_id=None, wait=False):
         '''
         Spawn a subprocess. Return immediately.
         '''
@@ -139,7 +128,6 @@ class Node(object):
             raise RuntimeError("Already busy")
             return
 
-        logger.info('----------------------------------------------')
         logger.info('received command: '+str(command))
         logger.info("start: run_id is " + str(run_id))
 
@@ -184,27 +172,25 @@ class Node(object):
     def popenAndCall(self, onExit, command, project, series, wait):
         """
         Runs the given args in a subprocess.Popen, and then calls the function
-        onExit when the subprocess completes.
-        onExit is a callable object, and popenArgs is a list/tuple of args that
-        would give to subprocess.Popen.
+        onExit when the subprocess completes. onExit is a callable object.
         """
         def runIt(onExit, command):
             rtncode = -1
 
-            # Log file is project/SERIES-stdout.log - note it's not in the series folder itself
-            pout = os.path.join(project, series + '-stdout.log')
             # Working directory is project/series
             cwd = os.path.join(project, series)
+            # Log file
+            plogfile = os.path.join(project, series, 'stdout.log')
 
-            try:
-                with open(pout, 'a') as file_out:
-                    self.p = subprocess.Popen(command, cwd=cwd, stdout=file_out, stderr=subprocess.STDOUT)
+#            try:
+            with open(plogfile, 'a') as file_out:
+                    self.p = subprocess.Popen('cmd /c run.bat', cwd=cwd, stdout=file_out, stderr=subprocess.STDOUT)
                     self.p.wait()
                     rtncode = self.p.returncode
-            except:
-                rtncode = 8
-            finally:
-                onExit(rtncode)
+#            except:
+#                rtncode = 8
+#            finally:
+                    onExit(rtncode)
 
         if wait:
             runIt(onExit, command)
@@ -261,6 +247,7 @@ def main():
 
     # Start Pyro -- requires one Pyro Name server on network somewhere
     n = Node()
+
     try:
         Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
     except:
