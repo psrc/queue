@@ -156,10 +156,9 @@ class Node(object):
         if self.run_id:
             data = {'status': returncode}
             url = 'http://localhost/runlog/'+str(self.run_id)
-            logger.info(url)
             response = requests.get(url, params=data)
 
-            logger.info('updated status: response ' + str(response))
+            logger.info('updated status for run ' + str(self.run_id) + ': response ' + str(response))
 
         if (returncode>0):
             pass #raise RuntimeError('Failed: return code '+str(returncode))
