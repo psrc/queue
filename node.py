@@ -89,31 +89,48 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runscript(self, lines, project, series, cwd=None, run_id=None):
+    def runscript(self, lines, project, series, run_id=None, tag=None):
         '''
-        Take a list of script lines, and run them
+        Take a list of script lines, and run them in a unique folder.
+        Folder name formed from project & series.
         '''
         self.create_dir(project, series)
+        logger.info('Starting run!')
+
+        # Set up environment variables for command substitution
+        replacements = {}
+        if tag: replacements['%TAG%'] = str(tag)
+
         for line in lines:
             if line.startswith('::'): continue
-            if len(line.strip())==0: continue
-            logger.info('RUN: '+line)
-            self.runandwait(line, cwd, run_id)
+            if line.startswith('#'): continue
+
+            cmd = line.strip()
+            if len(cmd)==0: continue
+
+            # Expand replacement variables
+            for k,v in replacements.iteritems():
+                cmd = cmd.replace(k,v)
+
+            logger.info('RUN: '+cmd)
+
+            self.runandwait(cmd, project, series, run_id)
             if self.returncode>0:
-                logger.error('ERR ' + str(returncode))
+                logger.error('ERR ' + str(self.returncode))
                 break
-            pass
+
+        logger.info('done!')
 
 
-    def runandwait(self, command, cwd=None, run_id=None):
+    def runandwait(self, command, project, series, run_id=None):
         '''
         Spawn a subprocess. Wait for task to finish, and return the process returncode.
         '''
         logger.info("runandwait: run_id is " + str(run_id))
-        self.start(command, cwd, wait=True, run_id=run_id)
+        self.start(command, project, series, wait=True, run_id=run_id)
 
 
-    def start(self, command, cwd=None, wait=False, run_id=None):
+    def start(self, command, project, series, wait=False, run_id=None):
         '''
         Spawn a subprocess. Return immediately.
         '''
@@ -126,6 +143,8 @@ class Node(object):
         logger.info('received command: '+str(command))
         logger.info("start: run_id is " + str(run_id))
 
+        cwd = os.path.join(project, series)
+
         self.busy = True
         self.command = command
         self.cwd = cwd
@@ -133,7 +152,7 @@ class Node(object):
         self.run_id=run_id
 
         # Launch the process, and save a handle to it in self.p
-        self.popenAndCall(self.onExit, command, cwd, wait)
+        self.popenAndCall(self.onExit, command, project, series, wait)
 
 
     def onExit(self, returncode):
@@ -159,10 +178,10 @@ class Node(object):
             logger.info('updated status: response ' + str(response))
 
         if (returncode>0):
-            raise RuntimeError('Failed: return code '+str(returncode))
+            pass #raise RuntimeError('Failed: return code '+str(returncode))
 
 
-    def popenAndCall(self, onExit, command, cwd, wait):
+    def popenAndCall(self, onExit, command, project, series, wait):
         """
         Runs the given args in a subprocess.Popen, and then calls the function
         onExit when the subprocess completes.
@@ -172,10 +191,10 @@ class Node(object):
         def runIt(onExit, command):
             rtncode = -1
 
-            # Put log files in cwd folder
-            pout = 'stdout.log'
-            if cwd:
-                pout = os.path.join(cwd, pout)
+            # Log file is project/SERIES-stdout.log - note it's not in the series folder itself
+            pout = os.path.join(project, series + '-stdout.log')
+            # Working directory is project/series
+            cwd = os.path.join(project, series)
 
             try:
                 with open(pout, 'a') as file_out:

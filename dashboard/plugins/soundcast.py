@@ -24,17 +24,17 @@ class Plugin(object):
         series = self.get_next_series(self.project)
 
         # fetch script lines
-        lines = open('dashboard/plugins/soundcast.script').readlines()
+        with open('dashboard/plugins/soundcast.script') as f:
+            lines = f.readlines()
 
         #todo - attempt to dial a node
-        n = Pyro4.Proxy('PYRONAME:Yoga')
+        n = Pyro4.Proxy('PYRONAME:PSRC3826')
 
         # create the log entry
         run = self.addLogEntry(self.project, series, tool, self.tag)
 
         # and run the fluffy
-        n.runscript(lines, self.project, series, cwd=None, run_id=run)
-
+        n.runscript(lines, self.project, series, run_id=run, tag=self.tag)
 
 
     def addLogEntry(self, project, series, tool, tag):
