@@ -89,7 +89,7 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runscript(self, lines, project, series, run_id=None, tag=None):
+    def runscript(self, lines, project, series, run_id=None, replacements={}):
         '''
         Take a list of script lines, and run them in a unique folder.
         Folder name formed from project & series.
@@ -99,27 +99,23 @@ class Node(object):
 
         self.create_dir(project, series)
 
-        # Set up environment variables for command substitution
-        replacements = {}
-        if tag: replacements['%TAG%'] = str(tag)
-
         # Write script file
         filepath = os.path.join(project, series, 'run.bat')
         with open(filepath, 'w') as script:
             script.writelines(lines)
 
         cmd = 'run.bat'
-        self.start(cmd, project, series, run_id)
+        self.start(cmd, project, series, run_id, replacements=replacements)
 
 
-    def runandwait(self, command, project, series, run_id=None):
+    def runandwait(self, command, project, series, run_id=None, replacements={}):
         '''
         Spawn a subprocess. Wait for task to finish, and return the process returncode.
         '''
-        self.start(command, project, series, run_id=run_id, wait=True)
+        self.start(command, project, series, run_id=run_id, wait=True, replacements=replacements)
 
 
-    def start(self, command, project, series, run_id=None, wait=False):
+    def start(self, command, project, series, run_id=None, replacements={}, wait=False):
         '''
         Spawn a subprocess. Return immediately.
         '''
@@ -140,7 +136,7 @@ class Node(object):
         self.run_id=run_id
 
         # Launch the process, and save a handle to it in self.p
-        self.popenAndCall(self.onExit, command, project, series, wait)
+        self.popenAndCall(self.onExit, command, project, series, wait, replacements)
 
 
     def onExit(self, returncode):
@@ -169,11 +165,17 @@ class Node(object):
             pass #raise RuntimeError('Failed: return code '+str(returncode))
 
 
-    def popenAndCall(self, onExit, command, project, series, wait):
+    def popenAndCall(self, onExit, command, project, series, wait, replacements):
         """
         Runs the given args in a subprocess.Popen, and then calls the function
         onExit when the subprocess completes. onExit is a callable object.
         """
+        # Populate any needed environment variables that were passed in
+        # all hail unicode! thanks python 2.
+        env = os.environ.copy()
+        for k,v in replacements.iteritems():
+            env[str(k)] = str(v)
+
         def runIt(onExit, command):
             rtncode = -1
 
@@ -184,13 +186,13 @@ class Node(object):
 
 #            try:
             with open(plogfile, 'a') as file_out:
-                    self.p = subprocess.Popen('cmd /c run.bat', cwd=cwd, stdout=file_out, stderr=subprocess.STDOUT)
+                    self.p = subprocess.Popen('cmd /c run.bat', cwd=cwd, env=env, stdout=file_out, stderr=subprocess.STDOUT)
                     self.p.wait()
                     rtncode = self.p.returncode
 #            except:
 #                rtncode = 8
 #            finally:
-                    onExit(rtncode)
+            onExit(rtncode)
 
         if wait:
             runIt(onExit, command)

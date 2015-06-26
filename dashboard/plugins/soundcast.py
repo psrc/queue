@@ -33,8 +33,12 @@ class Plugin(object):
         # create the log entry
         run = self.addLogEntry(self.project, series, tool, self.tag)
 
+        # Expected environment variables
+        replacements = {}
+        replacements['TAG'] = self.tag
+
         # and run the fluffy
-        n.runscript(lines, self.project, series, run_id=run, tag=self.tag)
+        n.runscript(lines, self.project, series, run_id=run, replacements=replacements)
 
 
     def addLogEntry(self, project, series, tool, tag):
