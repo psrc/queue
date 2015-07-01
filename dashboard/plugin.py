@@ -10,6 +10,7 @@ class Plugin(object):
         self.request = request
         self.project = data['project']
         self.tag = data['tag']
+        self.node = data['node']
 
         # Plugin instance must populate these
         self.name = None
@@ -33,7 +34,7 @@ class Plugin(object):
             lines = f.readlines()
 
         #todo - attempt to dial a node
-        n = Pyro4.Proxy('PYRONAME:BigBlackBox')
+        n = Pyro4.Proxy('PYRONAME:' + str(self.node))
 
         # create the log entry
         run = self.addLogEntry(self.project, series, tool, self.tag)
