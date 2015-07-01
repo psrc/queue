@@ -3,6 +3,8 @@ from dashboard.models import UserProfile, SoundcastRuns
 from django.contrib.auth.models import User
 from django.forms.widgets import ClearableFileInput
 
+import Pyro4
+
 def is_valid_file(f):
 	'''
 	Test max size of 100k bytes
@@ -12,6 +14,20 @@ def is_valid_file(f):
 	if f.size > MAX_SIZE:
 		raise forms.ValidationError('Too big: ' + f.name +
 								    ' is larger than '+ str(MAX_SIZE) + ' bytes')
+	return True
+
+def is_node_free(node):
+	n = Pyro4.Proxy('PYRONAME:' + node)
+
+	try:
+		busy = n.is_busy()
+
+	except:
+		raise forms.ValidationError('Node not responding.')
+
+	if busy:
+		raise forms.ValidationError('Node is busy.')
+
 	return True
 
 
@@ -40,3 +56,7 @@ class SoundcastRunsForm(forms.Form):
     configuration = forms.FileField(label='Input configuration',
     	validators=[is_valid_file], required=False)
 
+    # get list of nodes from nameserver, but don't list nameserver itself
+    node = forms.ChoiceField(label='Run on',
+    	choices=[(x, x) for x in Pyro4.locateNS().list().keys() if 'NameServer' not in x],
+    	validators=[is_node_free], required=True)
