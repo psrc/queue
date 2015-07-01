@@ -1,7 +1,8 @@
 from django import forms
-from dashboard.models import UserProfile, SoundcastRuns
 from django.contrib.auth.models import User
 from django.forms.widgets import ClearableFileInput
+
+from .models import UserProfile, SoundcastRuns
 
 import Pyro4
 
