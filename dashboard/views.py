@@ -11,6 +11,7 @@ from .forms import UserForm, UserProfileForm, NameForm
 from .forms import SoundcastRuns, SoundcastRunsForm
 from .models import RunLog
 from .tables import RunLogTable
+from .plugin import Plugin
 
 import datetime
 import Pyro4
@@ -155,7 +156,6 @@ def user_logout(request):
 	return HttpResponseRedirect('/')
 
 def fourkay(request):
-    # Load the soundcast page
     context = RequestContext(request)
     return render_to_response('dashboard/4k.html', {}, context)
 
@@ -206,11 +206,10 @@ def soundcast(request):
         if form.is_valid():
             print form.cleaned_data
 
-            import dashboard.plugins.soundcast as sc
-            tool = sc.Plugin(request, form.cleaned_data)
+            tool = Plugin(request, form.cleaned_data)
+            tool.set_plugin(name='SoundCast', script='dashboard/plugins/soundcast.script')
             tool.run_model()
 
-            #return render(request, 'dashboard/monitor.html', {'form': form})
             # redirect to a new URL:
             return HttpResponseRedirect('/')
         else:
