@@ -5,7 +5,8 @@ ARCHIVE_REPO=/c/users/billy/desktop/soundcast/archive
 RUN_DIR="${SCRATCH}/${PROJECT}/${SERIES}"
 
 # Use rsync to add/remove all files except Git configuration
-rsync -vrultz --delete --exclude '.git*'  $RUN_DIR  $ARCHIVE_REPO
+cd $RUN_DIR
+rsync -vrultz --delete --exclude '.git*'  $RUN_DIR/*  $ARCHIVE_REPO
 
 # -A option does a full add/remove of all files, whether new, existing, or deleted.
 git add -A .
