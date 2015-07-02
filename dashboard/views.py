@@ -206,8 +206,13 @@ def soundcast(request):
         if form.is_valid():
             print form.cleaned_data
 
+            # Fetch host, so we can build an update URL on the other side
+            host = request.get_host()
+
             tool = Plugin(request, form.cleaned_data)
-            tool.set_plugin(name='SoundCast', script='dashboard/plugins/soundcast.script')
+            tool.set_plugin(name='SoundCast',
+                            script='dashboard/plugins/soundcast.script',
+                            host=host)
             tool.run_model()
 
             # redirect to a new URL:

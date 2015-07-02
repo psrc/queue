@@ -17,10 +17,10 @@ class Plugin(object):
         self.script = None
 
 
-    def set_plugin(self, name=None, script=None):
+    def set_plugin(self, name=None, script=None, host=None):
         self.name = name
         self.script = script
-
+        self.host = host
 
     def run_model(self):
         '''
@@ -43,8 +43,10 @@ class Plugin(object):
         replacements = {}
         replacements['TAG'] = self.tag
 
+        #
+
         # and run the fluffy
-        n.runscript(lines, self.project, series, run_id=run, replacements=replacements)
+        n.runscript(lines, self.project, series, run_id=run, replacements=replacements, host=self.host)
 
 
     def addLogEntry(self, project, series, tool, tag):

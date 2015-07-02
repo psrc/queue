@@ -37,6 +37,7 @@ class Node(object):
     cwd = None
     returncode = -1
     run_id = None
+    host = None
 
     def __init__(self):
         self.name = socket.gethostname()
@@ -89,7 +90,7 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runscript(self, lines, project, series, run_id=None, replacements={}):
+    def runscript(self, lines, project, series, run_id=None, replacements={}, host=None):
         '''
         Take a list of script lines, and run them in a unique folder.
         Folder name formed from project & series.
@@ -98,6 +99,8 @@ class Node(object):
         logger.info('Runscript called!')
 
         self.create_dir(project, series)
+
+        if host: self.host = host
 
         # Write script file
         filepath = os.path.join(project, series, 'run.bat')
@@ -155,7 +158,10 @@ class Node(object):
         # Update run log with status
         if self.run_id:
             data = {'status': returncode}
-            url = 'http://localhost/runlog/'+str(self.run_id)
+
+            # Build URL from host and run_id
+            url = 'http://' + self.host + '/runlog/' + str(self.run_id)
+            print 'Updating via ', url
             response = requests.get(url, params=data)
 
             logger.info('updated status for run ' + str(self.run_id) + ': response ' + str(response))
