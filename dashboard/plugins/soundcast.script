@@ -15,6 +15,8 @@ if ERRORLEVEL 1 exit
 
 if defined TMPFILE move /Y "%TMPFILE%" .
 
-echo 'made it! running soundcast.'
+@echo 'made it! freezing inputs"
+call ..\soundcast-freezer.bat
 
+@echo 'made it! running soundcast.'
 python run_soundcast.py
