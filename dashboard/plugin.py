@@ -2,7 +2,7 @@ import Pyro4
 import logging, socket
 from datetime import datetime
 
-from dashboard.models import RunLog, Tool
+from .models import RunLog, Tool
 
 class Plugin(object):
 
