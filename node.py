@@ -90,7 +90,7 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runscript(self, lines, project, series, run_id=None, replacements={}, host=None):
+    def runscript(self, lines, freezer, project, series, run_id=None, replacements={}, host=None):
         '''
         Take a list of script lines, and run them in a unique folder.
         Folder name formed from project & series.
@@ -106,6 +106,12 @@ class Node(object):
         filepath = os.path.join(project, series, 'run.bat')
         with open(filepath, 'w') as script:
             script.writelines(lines)
+
+        # Write freezer file
+        filepath = os.path.join(project, series, 'freezer.bat')
+        with open(filepath, 'w') as frz:
+            frz.writelines(freezer)
+
 
         cmd = 'run.bat'
         self.start(cmd, project, series, run_id, replacements=replacements)

@@ -17,9 +17,10 @@ class Plugin(object):
         self.script = None
 
 
-    def set_plugin(self, name=None, script=None, host=None):
+    def set_plugin(self, name=None, script=None, freezer=None, host=None):
         self.name = name
         self.script = script
+        self.freezer = freezer
         self.host = host
 
     def run_model(self):
@@ -32,6 +33,10 @@ class Plugin(object):
         # fetch script lines
         with open(self.script) as f:
             lines = f.readlines()
+
+        # fetch freezer lines
+        with open(self.freezer) as f:
+            freezer_lines = f.readlines()
 
         #todo - attempt to dial a node
         n = Pyro4.Proxy('PYRONAME:' + str(self.node))
@@ -46,7 +51,8 @@ class Plugin(object):
         #
 
         # and run the fluffy
-        n.runscript(lines, self.project, series, run_id=run, replacements=replacements, host=self.host)
+        n.runscript(lines, freezer_lines, self.project, series,
+                    run_id=run, replacements=replacements, host=self.host)
 
 
     def addLogEntry(self, project, series, tool, tag):

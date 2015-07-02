@@ -5,7 +5,7 @@
 :: The script is run in %CWD%, which is autocreated by the node on startup
 :: ----------------------------------------------------------------------
 
-git clone https://github.com/psrc/model-dashboard.git
+git clone https://github.com/psrc/soundcast.git
 if ERRORLEVEL 1 exit
 
 cd soundcast
@@ -15,8 +15,8 @@ if ERRORLEVEL 1 exit
 
 if defined TMPFILE move /Y "%TMPFILE%" .
 
-@echo 'made it! freezing inputs"
-call ..\soundcast-freezer.bat
+echo ** made it! freezing inputs.
+call ..\freezer.bat
 
-@echo 'made it! running soundcast.'
-python run_soundcast.py
+echo ** made it! running soundcast.
+:: python run_soundcast.py

@@ -211,7 +211,8 @@ def soundcast(request):
 
             tool = Plugin(request, form.cleaned_data)
             tool.set_plugin(name='SoundCast',
-                            script='dashboard/plugins/soundcast.script',
+                            script ='dashboard/plugins/soundcast.script',
+                            freezer='dashboard/plugins/soundcast-freezer.bat',
                             host=host)
             tool.run_model()
 

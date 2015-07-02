@@ -20,7 +20,7 @@ cd %ARCHIVE%
 git add -A .
 
 :: Record changes as if user did it themselves
-git commit -m "$PROJECT / Series $SERIES / Version $TAG" --author "$AUTHOR"
+git commit -m "$PROJECT / Series $SERIES / Version $TAG" --author "Automated <noone@psrc.org>"
 
 :: Git-fat stores large files separately so repo doesn't get huge
 :: See https://github.com/cyaninc/git-fat
