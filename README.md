@@ -1,18 +1,14 @@
-model-dashboard
+PSRC Queue
 ===============
 
-This code allows a user to start and manage travel model runs on PSRC's internal servers. The repo includes a webpage application to access and initiate runs in the "dashboard" directory. A simple sever-side script (client.py) is also included in the main directory. This script must be actively running on a modelsrv machine before the server will accept model run requests from the web app.
+PSRC Queue is a modeling meta platform. That means you plug your own model into it — any model will do — and Queue allows you to set up, start, and manage your model runs. It can spawn runs on your local network servers, and soon will work seamlessly with EC2 and other cloud resources. All model inputs are archived using Git and Git Fat, to ensure trivial reproducibility of any past model run. 
 
-The web-app engine is Python-based Django. 
+Queue includes a web application to centrally launch manage model runs, and a simple script for worker nodes that allows those nodes to listen for job requests and do Queue's bidding. If you're accustomed to running models locally from a black box command window, you can still do that too: your run details can get pushed to Queue's central database so everything can be tracked whether you use the web interface or not.
 
-To get the web application up and running:
-- clone the repo
-- cd to "dashboard" directory and run the following in the shell: **python manage.py runserver 0.0.0.0:8000**. This will host the app on the local network. 
-- Other machines on the network can access the app page through http://a.b.c.d:8000/controller, where a, b, c, and d are the components of the LAN IPv4 address. Depending on where this app is hosted, this will be a fixed location in implementation. (It will also have to be hosted on an external network at some point.) Look up your ipv4 with "ipconfig" in the shell.
+Fully buzzword-enabled:
+* Queue's web-app front end is Python-based Django. 
+* The inter-machine communication uses Python Remote Objects, Pyro4. 
+* Git and specifically git-fat for archiving model inputs, even including large files
 
-To set up servers for running Soundcast on demand from the web app:
-- download "client.py" to a directory where we want model runs stored
-- run client.py from the shell: "python client.py"
-- this sets up a communication port on the modelsrv machine, waiting patiently for a command from the web-app
-
+We would love your contributions in code or ideas to make Queue bulletproof and more feature-rich. 
 
