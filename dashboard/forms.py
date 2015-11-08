@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.forms.widgets import ClearableFileInput
 
-from .models import UserProfile, SoundcastRuns
+from .models import UserProfile
 
 import Pyro4
 
@@ -48,16 +48,3 @@ class UserProfileForm(forms.ModelForm):
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Your name', max_length=100)
-
-
-class SoundcastRunsForm(forms.Form):
-    project = forms.CharField(max_length=100)
-    notes = forms.CharField(label='Run notes', max_length=512, required=False)
-    tag = forms.CharField(label='Git tag', max_length=64)
-    configuration = forms.FileField(label='Input configuration',
-    	validators=[is_valid_file], required=False)
-
-    # get list of nodes from nameserver, but don't list nameserver itself
-    node = forms.ChoiceField(label='Run on',
-    	choices=[(x, x) for x in Pyro4.locateNS().list().keys() if 'NameServer' not in x],
-    	validators=[is_node_free], required=True)

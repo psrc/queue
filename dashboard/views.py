@@ -8,7 +8,6 @@ from django_tables2 import RequestConfig
 from django.utils import timezone
 
 from .forms import UserForm, UserProfileForm, NameForm
-from .forms import SoundcastRuns, SoundcastRunsForm
 from .models import RunLog
 from .tables import RunLogTable
 from .plugin import Plugin
@@ -29,7 +28,7 @@ def index(request):
     statuses = []
 
     return render(request, 'dashboard/index.html',
-                    {'runlog':table, 'nodes':statuses} )
+                  {'runlog':table, 'nodes':statuses} )
 
 
 def launcher(request):
@@ -39,14 +38,15 @@ def launcher(request):
     # Find the user's name
     username = None
     if request.user.is_authenticated():
-    	username = {'logged_name': request.user.username}
+        username = {'logged_name': request.user.username}
 
     if request.POST:
-        form = SoundcastRuns(request.POST)
-        if form.is_valid():
-            instance = form.save()
+        pass # todo form = SoundcastRuns(request.POST)
+        #if form.is_valid():
+        #    instance = form.save()
     else :
-        form = SoundcastRuns()
+        pass
+        #form = SoundcastRuns()
 
     return render_to_response('dashboard/launcher.html', username, context)
 
@@ -73,9 +73,9 @@ def nodestatus(request, server_id):
 
 
 def about(request):
-	context = RequestContext(request)
+    context = RequestContext(request)
 
-	return render_to_response('dashboard/about.html', context)
+    return render_to_response('dashboard/about.html', context)
 
 
 def register(request):
@@ -119,41 +119,41 @@ def register(request):
     # Render the template depending on the context.
     return render_to_response(
         'dashboard/register.html',
-	    {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
-	    context)
+        {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
+        context)
 
 def user_login(request):
-	context = RequestContext(request)
+    context = RequestContext(request)
 
-	# If request is HTTP POST, try to extract user profile data
-	if request.method == 'POST':
-		username = request.POST['username']
-		password = request.POST['password']
+    # If request is HTTP POST, try to extract user profile data
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
 
-		user = authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)
 
-		# If we have a User object, the details are correct.
-		if user:
-			# Is accoutn active? It could have been disabled by the admin
-			if user.is_active:
-				login(request, user)
-				return HttpResponseRedirect('/')
-			else:
-				return HttpResponse('Your account is disabled. Please contact an administrator.')
-		else:
-			# Invalid login details provided.
-			print "Invalid login details: {0}, {1}".format(username, password)
-			return HttpResponse("Invalid login details supplied.")
+        # If we have a User object, the details are correct.
+        if user:
+            # Is accoutn active? It could have been disabled by the admin
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect('/')
+            else:
+                return HttpResponse('Your account is disabled. Please contact an administrator.')
+        else:
+            # Invalid login details provided.
+            print "Invalid login details: {0}, {1}".format(username, password)
+            return HttpResponse("Invalid login details supplied.")
 
-	# Reguest is not HTTP POST, display the login form.
-	else:
-		return render_to_response('dashboard/login.html', {}, context)
+    # Reguest is not HTTP POST, display the login form.
+    else:
+        return render_to_response('dashboard/login.html', {}, context)
 
 def user_logout(request):
-	logout(request)
+    logout(request)
 
-	# Return to homepage
-	return HttpResponseRedirect('/')
+    # Return to homepage
+    return HttpResponseRedirect('/')
 
 def fourkay(request):
     context = RequestContext(request)
@@ -171,7 +171,7 @@ def monitor(request):
     results_dict = dispatcher.rd_check_nodes(code_dict)
 
     return render_to_response('dashboard/monitor.html',
-    {'data': sorted(results_dict.iteritems())})
+                              {'data': sorted(results_dict.iteritems())})
 
 def runlog(request, run_id=None):
     '''Post: Update runlog status
@@ -196,33 +196,3 @@ def runlog(request, run_id=None):
 
     return HttpResponseRedirect('/')
     #return render(request, 'dashboard/index.html', {'form': form})
-
-def soundcast(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = SoundcastRunsForm(request.POST, request.FILES)
-        # check whether it's valid:
-        if form.is_valid():
-            print form.cleaned_data
-
-            # Fetch host, so we can build an update URL on the other side
-            host = request.get_host()
-
-            tool = Plugin(request, form.cleaned_data)
-            tool.set_plugin(name='SoundCast',
-                            script ='dashboard/plugins/soundcast.script',
-                            freezer='dashboard/plugins/soundcast-freezer.bat',
-                            host=host)
-            tool.run_model()
-
-            # redirect to a new URL:
-            return HttpResponseRedirect('/')
-        else:
-            print "invalid form is invalid."
-
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = SoundcastRunsForm()
-
-    return render(request, 'dashboard/soundcast.html', {'form': form})
