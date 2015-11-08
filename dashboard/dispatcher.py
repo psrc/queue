@@ -26,10 +26,10 @@ import struct
 import subprocess
 
 # List of potential model server machines on local network
-nodelist = ['PSRC3827', 'MODELSRV2', 'MODELSRV3', 'MODELSRV4']
+nodelist = ['BigBlackBox', 'PSRC3826', 'PSRC3827', 'MODELSRV2', 'MODELSRV3', 'MODELSRV4']
 
 def check_nodes(nodelist):
-    ''' 
+    '''
     Check run state on nodes.
     0 = Available
     1 = Unavailable
@@ -39,7 +39,7 @@ def check_nodes(nodelist):
     node_dict = {}
     # Create dictionary from nodelist and check state of each node
     # Note initial state 0 assumed first, updated with check_node_state call
-    for node, state in dict((node,0) for node in nodelist).iteritems():     
+    for node, state in dict((node,0) for node in nodelist).iteritems():
         try:
             proxy = Pyro4.core.Proxy("PYRONAME:" + node)
             node_dict[node] = proxy.check_node_state()
@@ -51,9 +51,9 @@ def check_nodes(nodelist):
 def rd_check_nodes(node_dict):
     readable_dict = {0: "Available", 1: "In Use", 2: "Connection Error"}
     result = {}
-    for node, state in node_dict.iteritems(): 
+    for node, state in node_dict.iteritems():
         result[node] = readable_dict[state]
-    
+
     return result
 
 # Start model run on specified node
@@ -68,7 +68,7 @@ class StartModel:
         for node, status in check_nodes(nodelist).iteritems():
             print node
             if status == 0:
-                print "This machine is free: " + node 
+                print "This machine is free: " + node
                 print "Starting a new run here."
                 proxy = Pyro4.core.Proxy("PYRONAME:" + node)
                 # Run a simple test script for now
