@@ -28,13 +28,15 @@ urlpatterns = patterns('',
 
 for tool in Tool.plugins:
     # this URL is for the launcher
-    mytool = tool()
-    main_url = mytool.title + r'/$'           # ex: 'soundcast/$'
-    view = mytool.view
+    main_url = tool.title + r'/$'           # ex: 'soundcast/$'
+    view = tool().view
 
     # todo this URL is for running the tool -- is this still needed?
     # run_title = 'run_' + title         # ex: 'run_soundcast'
     # run_url = 'run-' + title + r'/$'   # ex: 'run-soundcast/$'
     # run_view = tool.run_view
 
+    # Add URL for the tool name
     urlpatterns.extend(patterns('', url(main_url, view, name=tool.title)))
+    # And add the tool name itself as a function definition in dashboard.views, pointing to the view
+    setattr(views, tool.title, tool.view)

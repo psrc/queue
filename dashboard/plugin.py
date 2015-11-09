@@ -4,6 +4,7 @@ from datetime import datetime
 
 from .models import RunLog, Tool
 
+
 class Plugin(object):
 
     def __init__(self, request, data):
@@ -15,7 +16,6 @@ class Plugin(object):
         # Plugin instance must populate these
         self.name = None
         self.script = None
-
 
     def set_plugin(self, name=None, script=None, freezer=None, host=None):
         self.name = name
@@ -42,7 +42,7 @@ class Plugin(object):
         n = Pyro4.Proxy('PYRONAME:' + str(self.node))
 
         # create the log entry
-        run = self.addLogEntry(self.project, series, tool, self.tag)
+        run = self.add_log_entry(self.project, series, tool, self.tag)
 
         # Expected environment variables
         replacements = {}
@@ -54,8 +54,7 @@ class Plugin(object):
         n.runscript(lines, freezer_lines, self.project, series,
                     run_id=run, replacements=replacements, host=self.host)
 
-
-    def addLogEntry(self, project, series, tool, tag):
+    def add_log_entry(self, project, series, tool, tag):
         '''
         Add an entry to the run log for this project
         Returns the id of the entry
@@ -66,7 +65,6 @@ class Plugin(object):
 
         return run.id
 
-
     def get_next_series(self, project):
         '''
         Determine the next AA-style series for a project
@@ -74,7 +72,6 @@ class Plugin(object):
         num_projects = RunLog.objects.filter(project=project).count()
         series = self.get_series_from_count(num_projects)
         return series
-
 
     def get_series_from_count(self, count):
         '''
@@ -92,3 +89,6 @@ class Plugin(object):
         series += chr(c+capital_a)
 
         return series
+
+
+

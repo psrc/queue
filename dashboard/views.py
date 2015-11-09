@@ -10,7 +10,6 @@ from django.utils import timezone
 from .forms import UserForm, UserProfileForm, NameForm
 from .models import RunLog
 from .tables import RunLogTable
-from .plugin import Plugin
 
 import datetime
 import Pyro4
@@ -39,14 +38,6 @@ def launcher(request):
     username = None
     if request.user.is_authenticated():
         username = {'logged_name': request.user.username}
-
-    if request.POST:
-        pass # todo form = SoundcastRuns(request.POST)
-        #if form.is_valid():
-        #    instance = form.save()
-    else :
-        pass
-        #form = SoundcastRuns()
 
     return render_to_response('dashboard/launcher.html', username, context)
 
@@ -134,7 +125,7 @@ def user_login(request):
 
         # If we have a User object, the details are correct.
         if user:
-            # Is accoutn active? It could have been disabled by the admin
+            # Is account active? It could have been disabled by the admin
             if user.is_active:
                 login(request, user)
                 return HttpResponseRedirect('/')
@@ -196,3 +187,4 @@ def runlog(request, run_id=None):
 
     return HttpResponseRedirect('/')
     #return render(request, 'dashboard/index.html', {'form': form})
+
