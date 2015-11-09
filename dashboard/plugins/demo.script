@@ -1,0 +1,26 @@
+@echo off
+
+:: Tool script. Put yer stuff here
+:: Receives some env vars like %CWD%, %TMPFILE% from the form
+:: The script is run in %CWD%, which is autocreated by the node on startup
+:: ----------------------------------------------------------------------
+
+git clone https://github.com/psrc/queue.git
+if ERRORLEVEL 1 exit
+
+cd queue
+
+if defined TAG git checkout %TAG%
+if ERRORLEVEL 1 exit
+
+if defined TMPFILE move /Y "%TMPFILE%" .
+
+:: freeze inputs.
+:: note - Queue copies the freezer batch file to '..\freezer.bat', no   
+:: matter what it's called in the plugin folder. To prevent collisions.
+
+echo ** made it! freezing inputs.
+call ..\freezer.bat
+
+echo ** made it! running demo.
+echo "This file shows we actually ran something" >> output-proof.txt
