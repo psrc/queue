@@ -17,7 +17,7 @@ if defined TMPFILE move /Y "%TMPFILE%" .
 
 :: freeze inputs.
 :: note - Queue copies the freezer batch file to '..\freezer.bat', no   
-:: matter what it's called in the plugin folder. To prevent collisions.
+:: matter what it's called in the plugin folder.
 
 echo ** made it! freezing inputs.
 call ..\freezer.bat
