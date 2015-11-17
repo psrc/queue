@@ -1,5 +1,4 @@
 import Pyro4
-
 from django import forms
 from django.db import models
 from django.http.response import HttpResponseRedirect
@@ -7,12 +6,12 @@ from django.shortcuts import render
 
 from dashboard.forms import is_valid_file, is_node_free
 from dashboard.plugin import Plugin
-from dashboard.plugins.soundcast import SoundcastRuns
+from dashboard.plugins.SoundCast.soundcast import SoundcastRuns
 from dashboard.tool import Tool
 
 name = 'Demo'
-script = 'dashboard/plugins/demo.script'
-freezer = 'dashboard/plugins/demo-freezer.bat'
+script = 'dashboard/plugins/Demo/demo.script'
+freezer = 'dashboard/plugins/Demo/demo-freezer.bat'
 template = 'dashboard/demo.html'
 
 

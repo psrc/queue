@@ -7,8 +7,8 @@ set LOCATION=/cygdrive/x/DSA/Queue-Archive
 
 :: Use borg-backup to copy inputs to the shared borg folder.
 set ARCHIVE=%LOCATION%::%TOOL%
-c:\cygwin64\bin\bash.exe -i -c "/usr/bin/borg create --exclude '.git*' --exclude '.idea' --exclude '*.pyc' $ARCHIVE ."
 
+set BORG_UNKNOWN_UNENCRYPTED_REPO_ACCESS_IS_OK=yes
+set BORG_RELOCATED_REPO_ACCESS_IS_OK=yes
 
-
-
+c:\borg\bin\bash.exe -i -c "/usr/bin/borg create --exclude '.git*' --exclude '.idea' --exclude '*.pyc' $ARCHIVE ."
