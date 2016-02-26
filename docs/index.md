@@ -1,4 +1,4 @@
-Welcome to queue's documentation!
+Queue
 =================================
 Queue is a framework for managing and running models - any models! 
 It is a modeling "meta" platform, which means you plug your own model into it. 
@@ -13,7 +13,7 @@ Queue includes a web app to centrally launch and manage model runs, and a simple
 Configuration
 ==================
 
-.. toctree:
+.. toctree::
    :maxdepth: 2
 
    node
