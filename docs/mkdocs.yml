@@ -1,6 +1,1 @@
 site_name: Queue
-pages:
- - Home: ./index.md
- - Node: ./node.md
- - Server: ./server.md
-theme: readthedocs
