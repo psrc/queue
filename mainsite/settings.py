@@ -16,7 +16,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_PATH = os.path.join(SETTINGS_DIR, os.pardir)
 PROJECT_PATH = os.path.abspath(PROJECT_PATH)
 DATABASE_PATH = os.path.join(PROJECT_PATH, 'dashboard.db')
-TEMPLATE_PATH = os.path.join(PROJECT_PATH, 'templates')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -34,8 +33,6 @@ DEBUG = True
 # Use sqlite3 database when in development mode
 DEVELOPMENT = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -52,22 +49,27 @@ INSTALLED_APPS = (
     'dashboard',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.template.context_processors.debug',
-    'django.template.context_processors.i18n',
-    'django.template.context_processors.media',
-    'django.template.context_processors.static',
-    'django.template.context_processors.tz',
-    # 'django.template.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.request',
-)
-
-
-TEMPLATE_DIRS = (
-    TEMPLATE_PATH,
- )
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [ os.path.join(PROJECT_PATH, 'templates') ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': True,
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
