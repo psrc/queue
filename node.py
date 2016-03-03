@@ -103,7 +103,7 @@ class Node(object):
         if host: self.host = host
 
         # Write script file
-        filepath = os.path.join(project, series, 'run.bat')
+        filepath = os.path.join(project, series, 'run.sh')
         with open(filepath, 'w') as script:
             script.writelines(lines)
 
@@ -113,7 +113,7 @@ class Node(object):
             frz.writelines(freezer)
 
 
-        cmd = 'run.bat'
+        cmd = 'run.sh'
         self.start(cmd, project, series, run_id, replacements=replacements)
 
 
