@@ -14,7 +14,7 @@ admin.autodiscover()
 
 
 # Add URLs for each plugin
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
 
@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     url(r'nodes/(?P<server_id>[A-Za-z0-9_]+)/$', views.nodestatus, name='nodestatus'),
     url(r'register/$', views.register, name='register'),
     url(r'runlog/(?P<run_id>[0-9]+)/$', views.runlog, name='runlog'),
-)
+]
 
 for tool in Tool.plugins:
     # this URL is for the launcher
@@ -40,6 +40,7 @@ for tool in Tool.plugins:
     # run_view = tool.run_view
 
     # Add URL for the tool name
-    urlpatterns.extend(patterns('', url(main_url, view, name=tool.title)))
+    urlpatterns.append(url(main_url, view, name=tool.title))
+
     # And add the tool name itself as a function definition in dashboard.views, pointing to the view
     setattr(views, tool.title, tool.view)
