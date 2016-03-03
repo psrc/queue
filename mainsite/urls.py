@@ -5,7 +5,10 @@ from dashboard.tool import Tool
 from dashboard import views
 
 # this initializes all plugins
-from dashboard.plugins import *
+# from dashboard.plugins import *
+
+# explicitly call all plugins for now since there is a hang-up with git imports
+from dashboard.plugins import Demo, SoundCast
 
 admin.autodiscover()
 

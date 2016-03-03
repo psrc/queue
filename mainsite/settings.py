@@ -31,6 +31,9 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Use sqlite3 database when in development mode
+DEVELOPMENT = True
+
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -112,3 +115,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# For development, use settings-dev database definitions
+if not os.environ.get('DEVELOPMENT', None):
+    from settings_dev import *
