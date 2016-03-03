@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_tables2',
-    'dashboard'
+    'dashboard',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -85,9 +85,12 @@ WSGI_APPLICATION = 'mainsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#        'NAME': '/home/dsaadmin/db.sqlite3', # os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'queue',
+        'USER': 'django',
+        'PASSWORD': '1ck1L4AJieW4agQWJyFRv8OXP1yIyiciACzxwUflPs7ntDC0fM5bge30f4bYNNp',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 

@@ -18,7 +18,6 @@
 import os
 import sys
 import Pyro4
-import numpy as np
 import pickle
 import logging, logging.handlers
 import SocketServer
