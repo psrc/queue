@@ -5,18 +5,5 @@
 :: The script is run in %CWD%, which is autocreated by the node on startup
 :: ----------------------------------------------------------------------
 
-git clone https://github.com/psrc/soundcast.git
-if ERRORLEVEL 1 exit
-
-cd soundcast
-
-if defined TAG git checkout %TAG%
-if ERRORLEVEL 1 exit
-
-if defined TMPFILE move /Y "%TMPFILE%" .
-
-echo ** made it! freezing inputs.
-call ..\freezer.bat
-
-echo ** made it! running soundcast.
-:: python run_soundcast.py
+:: create a text file with timestamp
+echo "Soundcast run was requested: $(date)" > "$(date +%s).txt"
