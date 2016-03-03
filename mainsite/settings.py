@@ -55,7 +55,7 @@ TEMPLATES = [
         'DIRS': [ os.path.join(PROJECT_PATH, 'templates') ],
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug', True,
+            'debug': True,
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
                 # list if you haven't customized them:
