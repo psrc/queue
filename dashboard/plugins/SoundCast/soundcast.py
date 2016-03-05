@@ -52,9 +52,13 @@ class SoundcastRunsForm(forms.Form):
             validators=[is_valid_file], required=False)
 
     # get list of nodes from nameserver, but don't list nameserver itself
-    node = forms.ChoiceField(label='Run on',
+    try:
+        node = forms.ChoiceField(label='Run on',
             choices=[(x, x) for x in Pyro4.locateNS().list().keys() if 'NameServer' not in x],
             validators=[is_node_free], required=True)
+    except:
+        pass  # nameserver might not be up yet
+
 
 class SoundCast(Tool):
     """ PSRC SoundCast activity-based model plugin """
