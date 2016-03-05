@@ -4,3 +4,10 @@
 docs/_build
 docs/_static
 docs/_templates
+
+#virtualenv
+/bin/
+/include/
+/lib/
+/local/
+
