@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
 
 from dashboard.tool import Tool
 from dashboard import views
@@ -18,15 +20,15 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'about/$', views.about, name='about'),
-    url(r'launcher/$', views.launcher, name='launcher'),
+    url(r'about/$', login_required(views.about), name='about'),
+    url(r'launcher/$', login_required(views.launcher), name='launcher'),
     url(r'login/$', views.user_login, name='login'),
     url(r'logout/$', views.user_logout, name='logout'),
-    url(r'monitor/$', views.monitor, name='monitor'),
-    url(r'nodes/$', views.nodes, name='nodes'),
-    url(r'nodes/(?P<server_id>[A-Za-z0-9_]+)/$', views.nodestatus, name='nodestatus'),
+    url(r'monitor/$', login_required(views.monitor), name='monitor'),
+    url(r'nodes/$', login_required(views.nodes), name='nodes'),
+    url(r'nodes/(?P<server_id>[A-Za-z0-9_]+)/$', login_required(views.nodestatus), name='nodestatus'),
     url(r'register/$', views.register, name='register'),
-    url(r'runlog/(?P<run_id>[0-9]+)/$', views.runlog, name='runlog'),
+    url(r'runlog/(?P<run_id>[0-9]+)/$', login_required(views.runlog), name='runlog'),
 ]
 
 for tool in Tool.plugins:
@@ -40,7 +42,7 @@ for tool in Tool.plugins:
     # run_view = tool.run_view
 
     # Add URL for the tool name
-    urlpatterns.append(url(main_url, view, name=tool.title))
+    urlpatterns.append(url(main_url, login_required(view), name=tool.title))
 
     # And add the tool name itself as a function definition in dashboard.views, pointing to the view
     setattr(views, tool.title, tool.view)
