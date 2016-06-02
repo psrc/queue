@@ -9,7 +9,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(
     SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'queue.sqlite'),
-    SECRET_KEY="\x1348\xe8\xfa\x08\x15\x05\xa2_E\xbb}/,x\xf4\x8e\xcb\x1euVl\xdf\xd3|\xe2\xc3\xc1M\xa3\xdf",
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    SECRET_KEY="fake_key",
     USERNAME='admin',
     PASSWORD='admin'
 ))
@@ -24,7 +25,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), unique=False)
 
     def __init__(self, username, email):
         self.username = username
@@ -32,6 +33,46 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    project_contact = db.Column(db.String(256))
+    modeling_contact = db.Column(db.String(256))
+
+    def __unicode__(self): return self.name
+    class Meta: ordering = ['name']
+
+
+class Tool(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    url = db.Column(db.String(1024))
+    def __unicode__(self): return self.name
+    class Meta: ordering = ['name']
+
+
+class RunLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    series = db.Column(db.String(3))
+    note = db.Column(db.String(2048))
+    status = db.Column(db.Integer)
+    start = db.Column(db.DateTime)
+    duration = db.Column(db.DateTime)
+    tool = db.Column(db.String)
+    tool_tag = db.Column(db.String(64))
+    inputs = db.Column(db.String(2048))
+
+    def __unicode__(self):
+        if (self.project):
+            return '' + self.project + ' - ' + self.series
+        else:
+            return 'Run ' + str(self.id) + ' - ' + str(self.user)
+
+    class Meta: ordering = ['-start']
 
 
 #############################################################################
@@ -62,22 +103,23 @@ def view_launcher():
 def xmeow():
     return "<i><b>COMING SOON!</b></i>"
 
+# Build plug-in launcher URLs
+import tools
+for tool in tools.Tool.plugins:
+    # this URL is for the launcher
+    main_url = tool.title + r'/$'           # ex: 'soundcast/$'
+    view = tool().view
 
-# for tool in Tool.plugins:
-#     # this URL is for the launcher
-#     main_url = tool.title + r'/$'           # ex: 'soundcast/$'
-#     view = tool().view
-#
-#     # todo this URL is for running the tool -- is this still needed?
-#     # run_title = 'run_' + title         # ex: 'run_soundcast'
-#     # run_url = 'run-' + title + r'/$'   # ex: 'run-soundcast/$'
-#     # run_view = tool.run_view
-#
-#     # Add URL for the tool name
-#     urlpatterns.append(url(main_url, view, name=tool.title))
-#
-#     # And add the tool name itself as a function definition in dashboard.views, pointing to the view
-#     setattr(views, tool.title, tool.view)
+    # todo this URL is for running the tool -- is this still needed?
+    # run_title = 'run_' + title         # ex: 'run_soundcast'
+    # run_url = 'run-' + title + r'/$'   # ex: 'run-soundcast/$'
+    # run_view = tool.run_view
+
+    # Add URL for the tool name
+    app.add_url_rule(view, main_url, name=tool.title)
+
+    # And add the tool name itself as a function definition in dashboard.views, pointing to the view
+    # setattr(views, tool.title, tool.view)
 
 
 if __name__ == "__main__":
