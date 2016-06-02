@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+
+<table><tr>
+    <td style="vertical-align:top; padding-right:10px;">
+        <img width=96 src="{% static 'img/cat.png' %}"/>
+    </td>
+    <td style="vertical-align:top;">
+        <h3>DEMO PLUGIN</h3>
+
+        <p>A simple "model" that just copies some files and stuff.</p>
+    </td></tr>
+</table>
+
+<form style="padding-left:108px;" action="/Demo/" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Start Run">
+</form>
+
+
+{% endblock %}

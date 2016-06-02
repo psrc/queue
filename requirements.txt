@@ -1,0 +1,6 @@
+# run pip install -r requirements.txt
+
+Flask
+Flask-SQLAlchemy
+Flask-Table
+

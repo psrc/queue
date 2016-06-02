@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="viewport" content="=width=device-width, initial-scale=1.0">
+
+        <!-- Bootstrap -->
+        <link href="{{url_for('static', filename='css/bootstrap-fluid-adj.css')}}" rel="stylesheet" type="text/css">
+        <link href="{{url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{url_for('static', filename='css/bootstrap-responsive.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{url_for('static', filename='css/model-dashboard.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{url_for('static', filename='tables2/css/screen.css') }}" rel="stylesheet" type="text/css">
+
+        <title>Queue</title>
+    </head>
+
+    <body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+		   <div class="navbar-inner">
+		       <div class="container">
+		           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+		               <span class="icon-bar"></span>
+		               <span class="icon-bar"></span>
+		               <span class="icon-bar"></span>
+		           </button>
+		           <a class="brand" href="/">Queue</a>
+
+		           <div class="nav-collapse collapse">
+		               <ul class="nav pull-right">
+		                   {% if user.is_authenticated %}
+		                    <li class="navbar-text">Welcome, {{ user.username }}!</li>
+		                    <li><a href="/logout/">Logout</a></li>
+		                   {% else %}
+		                    <li><a href="/register/">Register</a></li>
+		                    <li><a href="/login/">Login</a></li>
+		                   {% endif %}
+		               </ul>
+		               <ul class="nav">
+		                   <li><a href="/about/">About</a></li>
+		               </ul>
+		           </div>
+		           <!--/.nav-collapse -->
+		       </div>
+           </div>
+		</div>
+
+		<div class="container-fluid">
+		    <div class="row-fluid">
+		        <div class="span3" style="float:right;">
+		            <div class="well sidebar-nav">
+		                <a href="/launcher" class="navbar-button">NEW RUN&hellip;</a>
+
+                        <li class="nav-header">Documentation</li>
+		                <li class="active"><a href="http://www.psrc.org">Dashboard Users Guide</a></li>
+		                <li class="active"><a href="http://psrc.github.io">4K</a> - <a href="http://soundcast.readthedocs.org/en/dev/docs/">SoundCast</a> - <a href="http://psrc.github.io">Urbansim</a></li>
+
+		                <li class="nav-header">Links</li>
+		                <li class="active"><a href="http://www.psrc.org">PSRC Home Page</a></li>
+		                <li class="active"><a href="http://psrc.github.io">I/O: PSRC Data Blog</a></li>
+
+                        <li class="nav-header">Nodes</li>
+
+                        <table id="node_table">
+                        {% for node,state,label in nodes %}
+
+                          <tr><td class="active navbar-button {{state}}">{{label}}</td><td class="active">{{node}}</td></tr>
+
+                        {% endfor %}
+                        </table>
+
+                    </div>
+		            <!--/.well -->
+		        </div>
+
+		        <div class="container"><div class="span9" style="float:left; padding-right:20px;">
+		            {% block body_block %}
+		            {% endblock %}
+		        </div></div>
+		        <!--/span-->
+		        <!--/span-->
+		    </div>
+		    <!--/row-->
+		</div>
+		<!--/.fluid-container-->
+
+		<hr>
+
+		<footer>
+			<div class="container">
+				<p>&copy; 2016 Puget Sound Regional Council</p>
+			</div>
+		</footer>
+
+        <script src="url_for('static', filename='js/jquery.js')}}"></script>
+        <script src="url_for('static', filename='js/bootstrap.min.js')}}"></script>
+        <script src="url_for('static', filename='js/model-dashboard.js')}}"></script>
+    </body>
+</html>

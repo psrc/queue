@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+<div class="hero-unit">
+ <h1>Monitor</h1>
+ <p>Monitor run status and look at important stuff.</p>
+</div>
+<!-- Machine run status -->
+
+<tr>
+    <th>Name</th>
+    <th>Status</th>
+</tr>
+{% for key, value in data %}
+<tr>
+    <p>
+    <td> {{ key }}: </td>
+    <td> {{ value }} </td>
+    </p>
+</tr>
+{% endfor %}
+
+{% endblock %}

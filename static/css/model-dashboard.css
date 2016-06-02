@@ -1,0 +1,95 @@
+/*!
+ * CSS tweaks for the PSRC Model Dashboard
+ *
+ */
+
+.navbar-button {
+  background: #d44937;
+  background-image: -webkit-linear-gradient(top, #d44937, #d04534);
+  background-image: -moz-linear-gradient(top, #d44937, #d04534);
+  background-image: -ms-linear-gradient(top, #d44937, #d04534);
+  background-image: -o-linear-gradient(top, #d44937, #d04534);
+  background-image: linear-gradient(to bottom, #d44937, #d04534);
+  -webkit-border-radius: 4;
+  -moz-border-radius: 4;
+  border-radius: 3px;
+  font-family: Arial;
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  text-decoration: none;
+  line-height: 40px;
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.navbar-button:hover {
+  background: #b33c2e;
+  text-decoration: none;
+  color: white;
+}
+
+.status-idle {
+  background: #44aa44;
+  line-height: 16px;
+  padding: 2px 5px;
+  width:50px;
+  display:block;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+
+.status-in-use {
+  background: #5555cc;
+  line-height: 16px;
+  padding: 2px 5px;
+  width:50px;
+  display:block;
+  margin-bottom: 0px;
+  margin-right: 10px;
+
+}
+
+.status-err {
+  background: #cc4444;
+  line-height: 16px;
+  padding: 2px 5px;
+  width:50px;
+  display:block;
+  margin-bottom: 0px;
+  margin-right: 10px;
+
+}
+
+.status-tbd {
+  background: #cccccc;
+  line-height: 16px;
+  padding: 2px 5px;
+  width:50px;
+  display:block;
+  margin-bottom: 0px;
+  margin-right: 10px;
+
+}
+
+
+
+
+li.active  {
+  list-style-type: none;
+  margin-bottom: 3px;
+}
+
+li.nav-header  {
+  margin-top: 15px;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+ul,li .errorlist {
+  color: red;
+  list-style-type: none;
+  margin-left: 0px; margin-bottom: 0px;
+  font-size: small;
+}
