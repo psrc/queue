@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
@@ -16,10 +17,10 @@ app.config.update(dict(
 ))
 app.config.from_envvar('QUEUE_SETTINGS', silent=True)
 
+db = SQLAlchemy(app)
+
 #############################################################################
 # DB models
-
-db = SQLAlchemy(app)
 
 
 class User(db.Model):
@@ -103,12 +104,21 @@ def view_launcher():
 def xmeow():
     return "<i><b>COMING SOON!</b></i>"
 
-# Build plug-in launcher URLs
-import tools
-for tool in tools.Tool.plugins:
+#############################################################################
+# App entry points for plug-ins
+
+from pluginmount import ModelPlugin
+
+# This import 'magically' attaches all plugins to the ModelPlugin mount point
+# See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
+
+from plugins import *
+
+for tool in ModelPlugin.get_plugins():
+    print tool.title
     # this URL is for the launcher
-    main_url = tool.title + r'/$'           # ex: 'soundcast/$'
-    view = tool().view
+    main_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
+    view = tool.view
 
     # todo this URL is for running the tool -- is this still needed?
     # run_title = 'run_' + title         # ex: 'run_soundcast'
@@ -116,11 +126,12 @@ for tool in tools.Tool.plugins:
     # run_view = tool.run_view
 
     # Add URL for the tool name
-    app.add_url_rule(view, main_url, name=tool.title)
+    app.add_url_rule(main_url, tool.title, view)
+
 
     # And add the tool name itself as a function definition in dashboard.views, pointing to the view
     # setattr(views, tool.title, tool.view)
 
-
 if __name__ == "__main__":
+    print app.url_map
     app.run()

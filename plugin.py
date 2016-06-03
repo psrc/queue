@@ -3,7 +3,6 @@ import logging, socket
 from datetime import datetime
 from queue import RunLog, Tool
 
-
 class Plugin(object):
 
     def __init__(self, request, data):

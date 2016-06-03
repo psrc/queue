@@ -8,6 +8,7 @@ class PluginMount(type):
 
     That's it!
     '''
+
     def __init__(cls, name, bases, attrs):
         if not hasattr(cls, 'plugins'):
             # This branch only executes when processing the mount point itself.
@@ -20,3 +21,26 @@ class PluginMount(type):
             # Simply appending it to the list is all that's needed to keep
             # track of it later.
             cls.plugins.append(cls)
+
+    def get_plugins(cls, *args, **kwargs):
+        return [p(*args, **kwargs) for p in cls.plugins]
+
+
+class ModelPlugin:
+    # TODO: update plugin docs
+    """
+    Mount point for plugins which refer to tools that can be run.
+
+    Tools implementing this should provide the following attributes:
+    =============  ========================================================
+    title          Tool name - this will be visible in the URL bar
+
+    view           The launcher form
+
+    dbtable        The model holding run logs
+
+    launcher_view  view method
+    =============  ========================================================
+    """
+    # metaclass adds the 'plugins' attribute
+    __metaclass__ = PluginMount
