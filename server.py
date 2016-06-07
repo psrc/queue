@@ -2,11 +2,15 @@ import os
 
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 
 # ###########################################################################
 # App config & initialization
+from wtforms import ValidationError
 
 app = Flask(__name__)
+Bootstrap(app)
+
 app.config.from_object(__name__)
 app.config.update(dict(
     SQLALCHEMY_DATABASE_URI='sqlite:///' + os.path.join(app.root_path, 'queue.sqlite'),
@@ -111,25 +115,17 @@ from pluginmount import ModelPlugin
 
 # This import 'magically' attaches all plugins to the ModelPlugin mount point
 # See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
-
 from plugins import *
 
 for tool in ModelPlugin.get_plugins():
     print tool.title
-    # this URL is for the launcher
     main_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
     view = tool.view
 
-    # todo this URL is for running the tool -- is this still needed?
-    # run_title = 'run_' + title         # ex: 'run_soundcast'
-    # run_url = 'run-' + title + r'/$'   # ex: 'run-soundcast/$'
-    # run_view = tool.run_view
-
-    # Add URL for the tool name
     app.add_url_rule(main_url, tool.title, view)
 
-
-    # And add the tool name itself as a function definition in dashboard.views, pointing to the view
+    # todo And add the tool name itself as a function definition in dashboard.views,
+    # pointing to the view
     # setattr(views, tool.title, tool.view)
 
 if __name__ == "__main__":

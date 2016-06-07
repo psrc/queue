@@ -27,15 +27,8 @@ $.getJSON( "/nodes", function( resp ) {
                     + zz.node + "</td></tr>"
                 );
             });
-
         }
-
     });
-
-
-    // Grab each one
-
 });
-
 
 });

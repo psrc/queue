@@ -1,7 +1,8 @@
 import Pyro4
 import logging, socket
 from datetime import datetime
-from queue import RunLog, Tool
+from server import RunLog, Tool
+
 
 class Plugin(object):
 
