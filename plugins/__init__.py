@@ -2,12 +2,12 @@
 import os
 
 # get folder name so we can search for plugin folders
-FOLDER = __name__.replace('.','/')
-__all__ = [name for name in os.listdir(FOLDER) if os.path.isdir(FOLDER+'/'+name)]
+FOLDER = __name__ + '/'
+__all__ = [plugin for plugin in os.listdir(FOLDER) if os.path.isdir(FOLDER + plugin)]
 
 # This import 'magically' attaches all plugins to the ModelPlugin mount point
 # See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
-from server.plugins import *
+from plugins import *
 from server.pluginmount import ModelPlugin
 
 

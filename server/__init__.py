@@ -9,4 +9,4 @@ Bootstrap(app)
 db = SQLAlchemy(app)
 
 # imports are below app instantiation to avoid circular references
-from server import views, models, forms, plugins
+from server import views, models, forms

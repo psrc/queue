@@ -28,7 +28,6 @@ import time
 logger = logging.getLogger(socket.gethostname())
 
 
->>>>>>> origin/flask
 class Node(object):
     busy = False
     command = None
