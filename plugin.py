@@ -1,13 +1,14 @@
 import Pyro4
 import logging, socket
 from datetime import datetime
+from flask import request
+
 from server import RunLog, Tool
 
 
 class Plugin(object):
 
-    def __init__(self, request, data):
-        self.request = request
+    def __init__(self, data):
         self.project = data['project']
         self.tag = data['tag']
         self.node = data['node']
@@ -58,7 +59,7 @@ class Plugin(object):
         Add an entry to the run log for this project
         Returns the id of the entry
         '''
-        run = RunLog(user=self.request.user, project=project,
+        run = RunLog(user=request.user, project=project,
             series=series, tool=tool, tool_tag=tag, start=datetime.now())
         run.save()
 

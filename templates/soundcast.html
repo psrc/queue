@@ -16,10 +16,8 @@
     </td></tr>
 </table>
 
-<form style="margin-left:108px;" action="/SoundCast/" enctype="multipart/form-data" method="post">
-    {{ wtf.quick_form(form) }}
-    <input style="margin-left:108px;" type="submit" value="Start Run">
-</form>
-
+<div style="margin-left:108px;">
+    {{ wtf.quick_form(form, action="/SoundCast/") }}
+</div>
 
 {% endblock %}

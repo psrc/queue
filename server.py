@@ -111,23 +111,10 @@ def xmeow():
 #############################################################################
 # App entry points for plug-ins
 
-from pluginmount import ModelPlugin
-
-# This import 'magically' attaches all plugins to the ModelPlugin mount point
-# See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
-from plugins import *
-
-for tool in ModelPlugin.get_plugins():
-    print tool.title
-    main_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
-    view = tool.view
-
-    app.add_url_rule(main_url, tool.title, view)
-
-    # todo And add the tool name itself as a function definition in dashboard.views,
-    # pointing to the view
-    # setattr(views, tool.title, tool.view)
+import plugins
 
 if __name__ == "__main__":
+    plugins.register_plugins(app)
     print app.url_map
+
     app.run()

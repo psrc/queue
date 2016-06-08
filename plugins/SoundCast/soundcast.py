@@ -1,34 +1,37 @@
-import Pyro4
-
-from flask import request, render_template
-
+import Pyro4, urlparse
+from flask import request, render_template, redirect
 from flask_wtf import Form
-from wtforms import validators, StringField, FileField, SelectField
-
-from pluginmount import ModelPlugin
+from wtforms import validators, StringField, FileField, SelectField, SubmitField
 import forms
 
+from pluginmount import ModelPlugin
+from plugin import Plugin
+
+
 def view_soundcast(cls):
-    # if this is a POST request we need to process the form data
+    print "HIYEEE"
+
+    form = SoundcastRunsForm()
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = SoundcastRunsForm()
-        # check whether it's valid:
-        if form.is_valid():
-            print form.cleaned_data
+        print 'POST!!!'
+        if form.validate():
+            print form.data
 
-            # Fetch host, so we can build an update URL on the other side
-            host = request.get_host()
+            # Parse host, so we can build an update URL on the other side
+            host_url = urlparse.urlparse(request.url)
+            host = "%s:%d" % (host_url.hostname, host_url.port)
+            print host
 
-            tool = None #Plugin(request, form.cleaned_data)
+            tool = Plugin(form.data)
             tool.set_plugin(name='SoundCast',
-                            script ='dashboard/plugins/soundcast.script',
-                            freezer='dashboard/plugins/soundcast-freezer.bat',
+                            script ='/plugins/soundcast.script',
+                            freezer='/plugins/soundcast-freezer.bat',
                             host=host)
-            tool.run_model()
 
-            # redirect to a new URL:
-            return None #HttpResponseRedirect('/')
+            # spawn model and redirect to the main index
+            tool.run_model()
+            return redirect('/')
+
         else:
             print "invalid form is invalid."
 
@@ -48,6 +51,8 @@ class SoundcastRunsForm(Form):
     tag = StringField('Git tag', [validators.Length(max=512)])
 
     configuration = FileField('Input configuration', [validators.InputRequired()])
+
+    submit = SubmitField('Start Run')
 
     # get list of nodes from nameserver, but don't list nameserver itself
     try:
