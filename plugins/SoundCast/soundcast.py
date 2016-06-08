@@ -9,18 +9,12 @@ from plugin import Plugin
 
 
 def view_soundcast(cls):
-    print "HIYEEE"
-
     form = SoundcastRunsForm()
     if request.method == 'POST':
-        print 'POST!!!'
         if form.validate():
-            print form.data
-
             # Parse host, so we can build an update URL on the other side
             host_url = urlparse.urlparse(request.url)
             host = "%s:%d" % (host_url.hostname, host_url.port)
-            print host
 
             tool = Plugin(form.data)
             tool.set_plugin(name='SoundCast',
@@ -43,20 +37,19 @@ def view_soundcast(cls):
 
 
 class SoundcastRunsForm(Form):
-    project = StringField('Project', [validators.InputRequired(),
-                                      validators.Length(max=50)])
+    project       = StringField('Project', [validators.InputRequired(), validators.Length(max=50)])
 
-    notes = StringField('Run notes', [validators.Length(max=512)])
+    notes         = StringField('Run notes', [validators.Length(max=512)])
 
-    tag = StringField('Git tag', [validators.Length(max=512)])
+    tag          = StringField('Git tag', [validators.Length(max=512)])
 
     configuration = FileField('Input configuration', [validators.InputRequired()])
 
-    node = SelectField(label='Run on', validators=[forms.verify_node_is_free])
+    node          = SelectField(label='Run on', validators=[forms.verify_node_is_free])
 
-    submit = SubmitField('Start Run')
+    submit        = SubmitField('Start Run')
 
-    # add node dropdown
+    # add node dropdown items
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
 
@@ -73,5 +66,7 @@ class SoundCast(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
     view = view_soundcast
     title = 'SoundCast'
+    url = 'http://soundcast.readthedocs.io'
     form = SoundcastRunsForm
     dbtable = None # todo SoundcastRuns
+
