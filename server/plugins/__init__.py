@@ -1,11 +1,14 @@
 # This finds all folders in the plugin directory and adds them to _all_ so they get imported.
 import os
-__all__ = [name for name in os.listdir("plugins") if os.path.isdir('plugins/'+name)]
+
+# get folder name so we can search for plugin folders
+FOLDER = __name__.replace('.','/')
+__all__ = [name for name in os.listdir(FOLDER) if os.path.isdir(FOLDER+'/'+name)]
 
 # This import 'magically' attaches all plugins to the ModelPlugin mount point
 # See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
-from plugins import *
-from pluginmount import ModelPlugin
+from server.plugins import *
+from server.pluginmount import ModelPlugin
 
 
 def register_plugins(app):

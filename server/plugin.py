@@ -1,9 +1,8 @@
-import Pyro4
-import logging, socket
-from datetime import datetime
 from flask import request
+from datetime import datetime
+import Pyro4
 
-from server import RunLog, Tool
+from server.models import RunLog
 
 
 class Plugin(object):
@@ -28,7 +27,7 @@ class Plugin(object):
         """
         yeah run that model!
         """
-        tool = Tool.objects.get(name=self.name)
+        tool = None # todo Tool.objects.get(name=self.name)
         series = self.get_next_series(self.project)
 
         # fetch script lines

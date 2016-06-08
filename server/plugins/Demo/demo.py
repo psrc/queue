@@ -1,4 +1,4 @@
-from pluginmount import ModelPlugin
+from server.pluginmount import ModelPlugin
 
 name = 'Demo'
 script = 'dashboard/plugins/Demo/demo.script'

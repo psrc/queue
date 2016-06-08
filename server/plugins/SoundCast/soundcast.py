@@ -1,11 +1,13 @@
-import Pyro4, urlparse
+import urlparse
+
+import Pyro4
 from flask import request, render_template, redirect
 from flask_wtf import Form
 from wtforms import validators, StringField, FileField, SelectField, SubmitField
-import forms
 
-from pluginmount import ModelPlugin
-from plugin import Plugin
+from server import forms
+from server.plugin import Plugin
+from server.pluginmount import ModelPlugin
 
 
 def view_soundcast(cls):
