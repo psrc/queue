@@ -11,7 +11,7 @@ from pluginmount import ModelPlugin
 def register_plugins(app):
     """Register Flask app URLs based on the found plugin folders"""
     for tool in ModelPlugin.get_plugins():
-        print 'Found plugin: ', tool.title
+        print 'Found plugin: /' + tool.title
         main_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
         view = tool.view
 

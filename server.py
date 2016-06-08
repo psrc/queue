@@ -114,7 +114,6 @@ def xmeow():
 import plugins
 
 if __name__ == "__main__":
+    print 'PSRC QUEUE'
     plugins.register_plugins(app)
-    print app.url_map
-
     app.run()

@@ -4,7 +4,7 @@ flask
 flask-bootstrap
 flask-sqlalchemy
 flask-table
-flask-wtforms
+flask-wtf
 pyro4
 watchdog
 wtforms

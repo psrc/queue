@@ -52,15 +52,21 @@ class SoundcastRunsForm(Form):
 
     configuration = FileField('Input configuration', [validators.InputRequired()])
 
+    node = SelectField(label='Run on', validators=[forms.verify_node_is_free])
+
     submit = SubmitField('Start Run')
 
-    # get list of nodes from nameserver, but don't list nameserver itself
-    try:
-        node = SelectField(label='Run on',
-                           choices=[(x, x) for x in Pyro4.locateNS().list().keys() if 'NameServer' not in x],
-                           validators=[forms.verify_node_is_free], required=True)
-    except:
-        pass  # nameserver might not be up yet
+    # add node dropdown
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+
+        # get list of nodes from nameserver, but don't list nameserver itself
+        try:
+            all_nodes = Pyro4.locateNS().list().keys()
+        except:
+            all_nodes = ['Nameserver not found']
+
+        self.node.choices = [(x, x) for x in all_nodes if 'NameServer' not in x]
 
 
 class SoundCast(ModelPlugin):
