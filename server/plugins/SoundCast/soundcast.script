@@ -1,0 +1,7 @@
+# Tool script. Put yer stuff here
+# Receives some env vars like %CWD%, %TMPFILE% from the form
+# The script is run in %CWD%, which is autocreated by the node on startup
+# ----------------------------------------------------------------------
+
+# create a text file with timestamp
+echo "Soundcast run was requested: $(date)" > "$(date +%s).txt"

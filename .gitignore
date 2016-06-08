@@ -1,13 +1,9 @@
+.idea
+venv
+
 *.pyc
+*.pyo
 *.log
-.idea/workspace.xml
-docs/_build
-docs/_static
-docs/_templates
+*.sqlite
 
-#virtualenv
-/bin/
-/include/
-/lib/
-/local/
-
+Thumbs.db

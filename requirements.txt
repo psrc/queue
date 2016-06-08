@@ -1,0 +1,11 @@
+# run pip install -r requirements.txt
+
+flask
+flask-bootstrap
+flask-sqlalchemy
+flask-table
+flask-wtf
+pyro4
+requests
+watchdog
+wtforms
