@@ -9,35 +9,18 @@
 <hr/>
 
 <table>
-  <tr>
-    <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
-        <img width=96 src="{{url_for('static', filename='img/4k.png')}}"/></td>
-    <td style="vertical-align:top;padding-bottom:35px;">
-        <h4>4K</h4>
-        <p>Trip-based travel model
-        <p><a class="btn" href="/4k/">Run 4K »</a></p>
-    </td>
-  </tr>
 
+{% for tool in tools %}
   <tr>
     <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
-        <img width=96 src="{{url_for('static', filename='img/cat.png')}}"/></td>
+        <img width=96 src="{{url_for('static', filename=tool.image)}}"/></td>
     <td style="vertical-align:top;padding-bottom:35px;">
-        <h4>SOUNDCAST</h4>
-        <p>Activity-based travel model</p>
-        <p><a class="btn" href="/SoundCast/">Run Soundcast »</a></p>
+        <h4>{{tool.title}}</h4>
+        <p>{{tool.description}}</p>
+        <p><a class="btn" href="/{{tool.title}}/">Run {{tool.title}} »</a></p>
     </td>
   </tr>
-
-  <tr>
-    <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
-        <img width=96 src="{{url_for('static', filename='img/urbansim.png')}}"/></td>
-    <td style="vertical-align:top;padding-bottom:35px;">
-        <h4>URBANSIM</h4>
-        <p>Land-use model</p>
-        <p><a class="btn" href="http://www.psrc.org/data/models/urbansim/">Run Urbansim »</a></p>
-    </td>
-  </tr>
+{% endfor %}
 
 </table>
 

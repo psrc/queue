@@ -1,13 +1,14 @@
 import Pyro4
 from flask import render_template, jsonify
 from server import app
+from pluginmount import ModelPlugin
 
 
 @app.route("/")
 def view_index():
-    table = None # todo RunLogTable(RunLog.objects.all())
+    table = None  # todo RunLogTable(RunLog.objects.all())
 
-    # Fetch active nodes - JS will fill this in later
+    # Placeholder for active nodes - client-side JS will fill this in later
     statuses = []
 
     return render_template('index.html',
@@ -21,7 +22,8 @@ def view_about():
 
 @app.route('/launcher/')
 def view_launcher():
-    return render_template('launcher.html', user=None)
+    tools = ModelPlugin.get_plugins()
+    return render_template('launcher.html', user=None, tools=tools)
 
 
 @app.route('/login/')

@@ -44,6 +44,8 @@ def cheem(cls, request):
 class Demo(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
     title = 'Demo'
+    description = "Sample plugin"
+    image = 'img/4k.png'
     form = None # DemoForm
     dbtable = None
     view = view_demo

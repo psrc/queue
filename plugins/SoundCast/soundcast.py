@@ -68,6 +68,8 @@ class SoundCast(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
     view = view_soundcast
     title = 'SoundCast'
+    image = 'img/cat.png'
+    description = 'The PSRC activity-based model'
     url = 'http://soundcast.readthedocs.io'
     form = SoundcastRunsForm
     dbtable = None # todo SoundcastRuns
