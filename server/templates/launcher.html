@@ -13,7 +13,7 @@
 {% for tool in tools %}
   <tr>
     <td style="vertical-align:top; padding-top:10px; padding-right:10px;">
-        <img width=96 src="{{url_for('static', filename=tool.image)}}"/></td>
+        <a href="/{{tool.title}}/"><img width=96 src="{{url_for('static', filename=tool.image)}}"/></a></td>
     <td style="vertical-align:top;padding-bottom:35px;">
         <h4>{{tool.title}}</h4>
         <p>{{tool.description}}</p>
