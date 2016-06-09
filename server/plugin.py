@@ -1,13 +1,14 @@
-from flask import request
 from datetime import datetime
 import Pyro4
 
-from server.models import RunLog
+from server.models import RunLog, User
+from server import db
 
 
 class Plugin(object):
     def __init__(self, data):
         self.project = data['project']
+        self.notes = data['notes']
         self.tag = data['tag']
         self.node = data['node']
 
@@ -27,8 +28,13 @@ class Plugin(object):
         """
         yeah run that model!
         """
-        tool = None # todo Tool.objects.get(name=self.name)
+
+        tool = None  # todo Tool.objects.get(name=self.name)
         series = self.get_next_series(self.project)
+
+        # create the log entry
+        run = self.add_log_entry(self.project, series, tool, self.tag)
+        return
 
         # fetch script lines
         with open(self.script) as f:
@@ -41,8 +47,6 @@ class Plugin(object):
         # todo - attempt to dial a node
         n = Pyro4.Proxy('PYRONAME:' + str(self.node))
 
-        # create the log entry
-        run = self.add_log_entry(self.project, series, tool, self.tag)
 
         # Expected environment variables
         replacements = {}
@@ -57,34 +61,36 @@ class Plugin(object):
         Add an entry to the run log for this project
         Returns the id of the entry
         """
-        run = RunLog(user=request.user, project=project,
-                     series=series, tool=tool, tool_tag=tag, start=datetime.now())
-        run.save()
+        run = RunLog(user=None, project=project, series=series,
+                     tool=tool, tool_tag=tag, start=datetime.now())
+        db.session.add(run)
+        db.session.commit()
 
         return run.id
 
-    def get_next_series(self, project):
+    @staticmethod
+    def get_next_series(project):
         """
         Determine the next AA-style series for a project
         """
-        num_projects = RunLog.objects.filter(project=project).count()
-        series = get_series_from_count(num_projects)
+        num_projects = len(RunLog.query.all())
+        series = Plugin.get_series_from_count(num_projects)
         return series
 
+    @staticmethod
+    def get_series_from_count(count):
+        """
+        Convert an integer to an AA-style series (AA,  AB, AC, etc)
+        """
+        capital_a = ord('A')
 
-def get_series_from_count(count):
-    """
-    Convert an integer to an AA-style series (AA,  AB, AC, etc)
-    """
-    capital_a = ord('A')
+        a = count / 676
+        b = (count - a * 676) / 26
+        c = count % 26
 
-    a = count / 676
-    b = (count - a * 676) / 26
-    c = count % 26
+        series = ''
+        if a: series += chr(a + capital_a - 1)
+        series += chr(b + capital_a)
+        series += chr(c + capital_a)
 
-    series = ''
-    if a: series += chr(a + capital_a - 1)
-    series += chr(b + capital_a)
-    series += chr(c + capital_a)
-
-    return series
+        return series

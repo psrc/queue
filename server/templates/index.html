@@ -9,7 +9,9 @@
 <h3>RUN LOG</h3>
 
 {% if runlog %}
-
+    {% for log_entry in runlog %}
+        <p>{{ log_entry }}</p>
+    {% endfor %}
 {% else %}
     <p>Run log is empty.</p>
 {% endif %}

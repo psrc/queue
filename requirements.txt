@@ -2,10 +2,12 @@
 
 flask
 flask-bootstrap
+flask-migrate
 flask-sqlalchemy
 flask-table
 flask-wtf
 pyro4
 requests
+sqlalchemy
 watchdog
 wtforms

@@ -2,11 +2,12 @@ import Pyro4
 from flask import render_template, jsonify
 from server import app
 from pluginmount import ModelPlugin
+from server.models import RunLog
 
 
 @app.route("/")
 def view_index():
-    table = None  # todo RunLogTable(RunLog.objects.all())
+    table = RunLog.query.all()
 
     # Placeholder for active nodes - client-side JS will fill this in later
     statuses = []

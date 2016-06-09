@@ -10,7 +10,7 @@ from server.plugin import Plugin
 from server.pluginmount import ModelPlugin
 
 
-def view_soundcast(cls):
+def view_soundcast_launcher(cls):
     form = SoundcastRunsForm()
     if request.method == 'POST':
         if form.validate():
@@ -66,7 +66,7 @@ class SoundcastRunsForm(Form):
 
 class SoundCast(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
-    view = view_soundcast
+    view = view_soundcast_launcher
     title = 'SoundCast'
     image = 'img/cat.png'
     description = 'The PSRC activity-based model'

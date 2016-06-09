@@ -29,13 +29,12 @@
 		                   {% if user.is_authenticated %}
 		                    <li class="navbar-text">Welcome, {{ user.username }}!</li>
 		                    <li><a href="/logout/">Logout</a></li>
+							<li><a href="/about/">About</a></li>
 		                   {% else %}
+		                    <li><a href="/about/">About</a></li>
 		                    <li><a href="/register/">Register</a></li>
 		                    <li><a href="/login/">Login</a></li>
 		                   {% endif %}
-		               </ul>
-		               <ul class="nav">
-		                   <li><a href="/about/">About</a></li>
 		               </ul>
 		           </div>
 		           <!--/.nav-collapse -->
@@ -86,7 +85,7 @@
 
 		<footer>
 			<div class="container">
-				<p>&copy; 2016 Puget Sound Regional Council</p>
+				<p align="right">&copy; 2016 Puget Sound Regional Council</p>
 			</div>
 		</footer>
 

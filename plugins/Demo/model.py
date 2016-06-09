@@ -6,7 +6,7 @@ freezer = 'dashboard/plugins/Demo/demo-freezer.bat'
 template = 'dashboard/demo.html'
 
 
-def view_demo(cls): #, request):
+def view_demo_launcher(cls):
     return "hiii"
 
 def cheem(cls, request):
@@ -48,4 +48,4 @@ class Demo(ModelPlugin):
     image = 'img/4k.png'
     form = None # DemoForm
     dbtable = None
-    view = view_demo
+    view = view_demo_launcher
