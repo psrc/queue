@@ -1,5 +1,8 @@
 import Pyro4
-from flask import render_template, jsonify
+from flask import render_template, jsonify, url_for, request
+from flask_table import Table, Col, DatetimeCol
+from sqlalchemy import desc
+
 from server import app
 from pluginmount import ModelPlugin
 from server.models import RunLog
@@ -7,13 +10,53 @@ from server.models import RunLog
 
 @app.route("/")
 def view_index():
-    table = RunLog.query.all()
+    if not request.args.get('sort'):
+        # Default is to sort by run id, descending (most recent first)
+        sort = reverse = None
+        entries = RunLog.query.order_by(desc('id'))
+    else:
+        # Determine sort column and forward/reverse
+        sort = request.args.get('sort', 'id')
+        direction = request.args.get('direction', 'desc')
+        reverse = (direction == 'desc')
+        if direction == 'desc':
+            entries = RunLog.query.order_by(desc(sort))
+        else:
+            entries = RunLog.query.order_by(sort)
+
+    # Fetch most recent runs
+    runtable = RunLogTable(entries, sort_by=sort, sort_reverse=reverse,
+                           classes=['table','table-striped','table-hover'],
+                           thead_classes=['thead-inverse'])
 
     # Placeholder for active nodes - client-side JS will fill this in later
     statuses = []
 
     return render_template('index.html',
-                           user=None, runlog=table, nodes=statuses)
+                           user=None, runlog=runtable, nodes=statuses)
+
+
+class RunLogTable(Table):
+    """Flask Table which formats the runlog on the main page."""
+    allow_sort = True
+
+    project = Col('Project')
+    series = Col('Series')
+    note = Col('Notes')
+    id = Col('Run ID')
+    start = DatetimeCol('Started')
+    user_id = Col('User')
+
+    def tr_format(self, item):
+        """make rows clickable"""
+        url = url_for('runlog', run_id=item.id)
+        return '<tr class="clickable-row" data-href="%s">{}</tr>' % url
+
+    def sort_url(self, col_key, reverse=False):
+        """create the clickable sort links in the table headers"""
+        if reverse: direction = 'desc'
+        else: direction = 'asc'
+        return url_for('view_index', sort=col_key, direction=direction)
 
 
 @app.route('/about/')
@@ -150,14 +193,20 @@ def register(request):
 
 
 @app.route('/runlog/<int:run_id>/')
-def runlog(request, run_id=None):
+def runlog(run_id=None):
+    log = RunLog.query.filter_by(id=run_id).first()
+    print log
+    return render_template('details', log=log)
+
+
+
+@app.route('/update_runlog/<int:run_id>/')
+def update_runlog(run_id=None):
     '''Post: Update runlog status
     '''
     #todo This is WRONG! -- I'm using a GET instead of a POST, and I'm changing the database
     # This breaks the REST paradigm, but Django is blocking POST because of cross-site-request-forgery
     # I think.  I need to fix this, but I'm hacking it here for now because, time.
-
-    run = RunLog.objects.get(id=int(run_id))
 
     # update status
     status = request.GET['status'][0]

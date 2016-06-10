@@ -29,11 +29,11 @@ class Plugin(object):
         yeah run that model!
         """
 
-        tool = None  # todo Tool.objects.get(name=self.name)
+        tool = self.name
         series = self.get_next_series(self.project)
 
         # create the log entry
-        run = self.add_log_entry(self.project, series, tool, self.tag)
+        run = self.add_log_entry(tool, series)
         return
 
         # fetch script lines
@@ -56,13 +56,15 @@ class Plugin(object):
         n.runscript(lines, freezer_lines, self.project, series,
                     run_id=run, replacements=replacements, host=self.host)
 
-    def add_log_entry(self, project, series, tool, tag):
+    def add_log_entry(self, tool, series):
         """
         Add an entry to the run log for this project
         Returns the id of the entry
         """
-        run = RunLog(user=None, project=project, series=series,
-                     tool=tool, tool_tag=tag, start=datetime.now())
+        run = RunLog(user=None, project=self.project, series=series,
+                     note=self.notes, tool=tool, tool_tag=self.tag,
+                     start=datetime.now())
+
         db.session.add(run)
         db.session.commit()
 
@@ -73,7 +75,7 @@ class Plugin(object):
         """
         Determine the next AA-style series for a project
         """
-        num_projects = len(RunLog.query.all())
+        num_projects = RunLog.query.filter_by(project=project).count()
         series = Plugin.get_series_from_count(num_projects)
         return series
 
