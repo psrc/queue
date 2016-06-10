@@ -9,6 +9,10 @@
   cursor: pointer;
 }
 
+.well {
+    margin-top: 20px;
+}
+
 .navbar-button {
   background: #d44937;
   background-image: -webkit-linear-gradient(top, #d44937, #d04534);

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+<h3>RUN LOG</h3>
+
+{% if runlog %}
+    {{ runlog }}
+{% else %}
+    <p>Run log is empty.</p>
+{% endif %}
+
+{% endblock %}

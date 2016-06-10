@@ -54,13 +54,21 @@ class RunLogTable(Table):
     """Flask Table which formats the runlog on the main page."""
     allow_sort = True
 
+    # Columns in order of display:
     status = StatusCol('')
     id = Col('Run')
     project = Col('Project')
     series = Col('Series')
     note = Col('Notes')
-    user_id = Col('User')
+    tool = Col('Model')
+    # user_id = Col('User')
     start = DatetimeCol('Started')
+
+    def __init__(self, items, classes=None, thead_classes=None, sort_by=None, sort_reverse=False, no_items=None):
+        super(RunLogTable, self).__init__(items, classes, thead_classes, sort_by, sort_reverse, no_items)
+
+        # don't bother showing Model column if there is only one model plugin
+        if len(ModelPlugin.get_plugins()) < 2: self.tool.show = False
 
     def tr_format(self, item):
         """make rows clickable"""
@@ -210,7 +218,10 @@ def register(request):
 @app.route('/runlog/<int:run_id>/')
 def runlog(run_id=None):
     log = RunLog.query.filter_by(id=run_id).first()
-    return render_template('details', log=log)
+    tool = ModelPlugin.get(log.tool)
+    template='%s-results.html' % tool.title.lower()
+
+    return render_template(template, log=log, tool=tool, user=None)
 
 
 @app.route('/update_runlog/<int:run_id>/')

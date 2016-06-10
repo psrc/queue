@@ -15,7 +15,8 @@ def register_plugins(app):
     """Register Flask app URLs based on the found plugin folders"""
     for tool in ModelPlugin.get_plugins():
         print 'Found plugin: /' + tool.title
-        main_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
-        view = tool.view
 
-        app.add_url_rule(main_url, tool.title, view, methods=['GET','POST'])
+        launcher_url = '/' + tool.title + '/'  # ex: 'soundcast/$'
+
+        app.add_url_rule(launcher_url, tool.title, tool.launcher,
+                         methods=['GET','POST'])

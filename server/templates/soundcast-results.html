@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category_name }}{% endblock %}
+{% block body_block %}
+
+<h3><img width=48
+         src="{{url_for('static',filename='img/cat.png')}}"/>&nbsp;&nbsp;SOUNDCAST RESULTS: RUN {{log.id}}</h3>
+
+<table class="table">
+    <tr><td>Project</td><td>{{log.project}}</td></tr>
+    <tr><td>Notes</td>  <td>{{log.note}}</td></tr>
+    <tr><td>Start</td>  <td>{{log.start.ctime()}}</td></tr>
+</table>
+
+<p><b><i>&nbsp;&nbsp;Add fancy visualizations here!</i></b></p>
+<img src="{{url_for('static',filename='img/scatterplot.png')}}"/>
+
+{% endblock %}

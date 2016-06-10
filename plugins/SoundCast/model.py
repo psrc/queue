@@ -45,8 +45,6 @@ class SoundcastRunsForm(Form):
 
     tag          = StringField('Git tag', [validators.Length(max=512)])
 
-    configuration = FileField('Input configuration', [validators.InputRequired()])
-
     node          = SelectField(label='Run on', validators=[forms.verify_node_is_free])
 
     submit        = SubmitField('Start Run')
@@ -66,11 +64,11 @@ class SoundcastRunsForm(Form):
 
 class SoundCast(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
-    view = view_soundcast_launcher
     title = 'SoundCast'
     image = 'img/cat.png'
     description = 'The PSRC activity-based model'
     url = 'http://soundcast.readthedocs.io'
     form = SoundcastRunsForm
     dbtable = None # todo SoundcastRuns
+    launcher = view_soundcast_launcher
 

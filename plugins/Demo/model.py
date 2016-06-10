@@ -1,3 +1,12 @@
+import urlparse
+
+import Pyro4
+from flask import request, render_template, redirect
+from flask_wtf import Form
+from wtforms import validators, StringField, FileField, SelectField, SubmitField
+
+from server import forms
+from server.plugin import Plugin
 from server.pluginmount import ModelPlugin
 
 name = 'Demo'
@@ -7,38 +16,55 @@ template = 'dashboard/demo.html'
 
 
 def view_demo_launcher(cls):
-    return "hiii"
-
-def cheem(cls, request):
-    # if this is a POST request we need to process the form data
+    form = DemoLauncherForm()
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = None #DemoForm(request.POST, request.FILES)
-        # check whether it's valid:
-        if form.is_valid():
-            print form.cleaned_data
+        if form.validate():
+            # Parse host, so we can build an update URL on the other side
+            host_url = urlparse.urlparse(request.url)
+            host = "%s:%d" % (host_url.hostname, host_url.port)
 
-            # Fetch host, so we can build an update URL on the other side
-            host = request.get_host()
-
-            tool = None #Plugin(request, form.cleaned_data)
+            tool = Plugin(form.data)
             tool.set_plugin(name=name,
-                            script =script,
+                            script=script,
                             freezer=freezer,
                             host=host)
-            tool.run_model()
 
-            # redirect to a new URL:
-            return None #HttpResponseRedirect('/')
+            # spawn model and redirect to the main index
+            tool.run_model()
+            return redirect('/')
+
         else:
             print "invalid form is invalid."
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        pass # form = DemoForm()
+        form = DemoLauncherForm()
 
-    return "hiii" # None #render(request, template, {'form': form})
+    return render_template('demo.html', user=None, form=form)
 
+
+class DemoLauncherForm(Form):
+    project       = StringField('Project', [validators.InputRequired(), validators.Length(max=50)])
+
+    notes         = StringField('Run notes', [validators.Length(max=512)])
+
+    tag           = StringField('Git tag', [validators.Length(max=512)])
+
+    node          = SelectField(label='Run on', validators=[forms.verify_node_is_free])
+
+    submit        = SubmitField('Start Run')
+
+    # add node dropdown items
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+
+        # get list of nodes from nameserver, but don't list nameserver itself
+        try:
+            all_nodes = Pyro4.locateNS().list().keys()
+        except:
+            all_nodes = ['Nameserver not found']
+
+        self.node.choices = [(x, x) for x in all_nodes if 'NameServer' not in x]
 
 
 class Demo(ModelPlugin):
@@ -46,6 +72,7 @@ class Demo(ModelPlugin):
     title = 'Demo'
     description = "Sample plugin"
     image = 'img/4k.png'
-    form = None # DemoForm
+    url = 'http://www.queue-project.org'
+    form = DemoLauncherForm
     dbtable = None
-    view = view_demo_launcher
+    launcher = view_demo_launcher

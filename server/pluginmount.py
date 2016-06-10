@@ -16,14 +16,19 @@ class PluginMount(type):
             # class shouldn't be registered as a plugin. Instead, it sets up a
             # list where plugins can be registered later.
             cls.plugins = []
+            cls.lookup = {}
         else:
             # This must be a plugin implementation, which should be registered.
             # Simply appending it to the list is all that's needed to keep
             # track of it later.
             cls.plugins.append(cls)
+            cls.lookup[cls.title] = cls
 
     def get_plugins(cls, *args, **kwargs):
         return [p(*args, **kwargs) for p in cls.plugins]
+
+    def get(cls, title):
+        return cls.lookup[title]
 
 
 class ModelPlugin:
