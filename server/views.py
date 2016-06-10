@@ -36,16 +36,31 @@ def view_index():
                            user=None, runlog=runtable, nodes=statuses)
 
 
+class StatusCol(Col):
+    """Render a readable run status"""
+    def td_format(self, content):
+        if content == -1:
+            # running: hourglass
+            return '<span style="color:#868;"><b>&#x231b;</b></span>'
+        elif content == 0:
+            # success: checkmark
+            return '<span style="color:#4d4;"><b>&#x2714;</b></span>'
+        else:
+            # failed: red flag
+            return '<span style="color:#d44;">&#x1f3c1;</span>'
+
+
 class RunLogTable(Table):
     """Flask Table which formats the runlog on the main page."""
     allow_sort = True
 
+    status = StatusCol('')
+    id = Col('Run ID')
     project = Col('Project')
     series = Col('Series')
     note = Col('Notes')
-    id = Col('Run ID')
-    start = DatetimeCol('Started')
     user_id = Col('User')
+    start = DatetimeCol('Started')
 
     def tr_format(self, item):
         """make rows clickable"""
@@ -195,9 +210,7 @@ def register(request):
 @app.route('/runlog/<int:run_id>/')
 def runlog(run_id=None):
     log = RunLog.query.filter_by(id=run_id).first()
-    print log
     return render_template('details', log=log)
-
 
 
 @app.route('/update_runlog/<int:run_id>/')

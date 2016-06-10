@@ -63,7 +63,7 @@ class Plugin(object):
         """
         run = RunLog(user=None, project=self.project, series=series,
                      note=self.notes, tool=tool, tool_tag=self.tag,
-                     start=datetime.now())
+                     status=-1, start=datetime.now())
 
         db.session.add(run)
         db.session.commit()
