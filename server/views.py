@@ -215,13 +215,25 @@ def register(request):
         context)
 
 
-@app.route('/runlog/<int:run_id>/')
+@app.route('/runlog/<int:run_id>', methods=['GET','PUT'])
 def runlog(run_id=None):
+    """GET: show run details.  PUT: update run exit-status"""
     log = RunLog.query.filter_by(id=run_id).first()
-    tool = ModelPlugin.get(log.tool)
-    template='%s-results.html' % tool.title.lower()
 
-    return render_template(template, log=log, tool=tool, user=None)
+    if request.method == 'PUT':
+        if 'status' in request.json:
+            from server import db
+            log.status = request.json['status']
+            db.session.add(log)
+            db.session.commit()
+
+            return 'OK'
+
+    else:
+        tool = ModelPlugin.get(log.tool)
+        template='%s-results.html' % tool.title.lower()
+
+        return render_template(template, log=log, tool=tool, user=None)
 
 
 @app.route('/update_runlog/<int:run_id>/')

@@ -150,7 +150,7 @@ class Node(object):
         Callback function which is run when a subprocess is completed.
         Resets busy flag and gets node ready for the next run.
         """
-        logger.info("ON-EXIT: return code "+ str(returncode) + " : " + str(self.command))
+        logger.info("ON-EXIT: return code " + str(returncode) + " : " + str(self.command))
 
         self.returncode = returncode
         self.busy = False
@@ -164,8 +164,9 @@ class Node(object):
 
             # Build URL from host and run_id
             url = 'http://' + self.host + '/runlog/' + str(self.run_id)
-            print 'Updating via ', url
-            response = requests.get(url, params=data)
+            print 'Updating via PUT:', url
+
+            response = requests.put(url, params=data)
 
             logger.info('updated status for run ' + str(self.run_id) + ': response ' + str(response))
 
