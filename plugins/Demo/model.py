@@ -9,10 +9,9 @@ from server import forms
 from server.plugin import Plugin
 from server.pluginmount import ModelPlugin
 
-name = 'Demo'
-script = 'dashboard/plugins/Demo/demo.script'
-freezer = 'dashboard/plugins/Demo/demo-freezer.bat'
-template = 'dashboard/demo.html'
+name =     'Demo'
+script   = 'plugins/Demo/demo.script'
+snapshot = 'plugins/Demo/demo-snapshot.bat'
 
 
 def view_demo_launcher(cls):
@@ -26,7 +25,7 @@ def view_demo_launcher(cls):
             tool = Plugin(form.data)
             tool.set_plugin(name=name,
                             script=script,
-                            freezer=freezer,
+                            snapshot=snapshot,
                             host=host)
 
             # spawn model and redirect to the main index

@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 :: Tool script. Put yer stuff here
 :: Receives some env vars like %CWD%, %TMPFILE% from the form
@@ -16,11 +16,11 @@ if ERRORLEVEL 1 exit
 if defined TMPFILE move /Y "%TMPFILE%" .
 
 :: freeze inputs.
-:: note - Queue copies the freezer batch file to '..\freezer.bat', no   
+:: note - Queue copies the freezer batch file to '..\snapshot.bat', no
 :: matter what it's called in the plugin folder.
 
 echo ** made it! freezing inputs.
-call ..\freezer.bat
+call ..\snapshot.bat
 
 echo ** made it! running demo.
-echo "This file shows we actually ran something" >> output-proof.txt
+echo This file shows we actually ran something >> output-proof.txt

@@ -15,13 +15,13 @@ class Plugin(object):
         # Plugin instance must populate these
         self.name = None
         self.script = None
-        self.freezer = None
+        self.snapshot = None
         self.host = None
 
-    def set_plugin(self, name=None, script=None, freezer=None, host=None):
+    def set_plugin(self, name=None, script=None, snapshot=None, host=None):
         self.name = name
         self.script = script
-        self.freezer = freezer
+        self.snapshot = snapshot
         self.host = host
 
     def run_model(self):
@@ -34,23 +34,22 @@ class Plugin(object):
 
         # create the log entry
         run = self.add_log_entry(tool, series)
-        return
 
         # fetch script lines
         with open(self.script) as f:
             lines = f.readlines()
 
         # fetch freezer lines
-        with open(self.freezer) as f:
+        with open(self.snapshot) as f:
             freezer_lines = f.readlines()
 
         # todo - attempt to dial a node
         n = Pyro4.Proxy('PYRONAME:' + str(self.node))
 
-
         # Expected environment variables
         replacements = {}
         replacements['TAG'] = self.tag
+        replacements['QUEUE_RUN_ID'] = run
 
         # and run the fluffy
         n.runscript(lines, freezer_lines, self.project, series,

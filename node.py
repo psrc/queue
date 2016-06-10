@@ -101,17 +101,16 @@ class Node(object):
         if host: self.host = host
 
         # Write script file
-        filepath = os.path.join(project, series, 'run.sh')
+        filepath = os.path.join(project, series, 'run.bat')
         with open(filepath, 'w') as script:
             script.writelines(lines)
 
         # Write freezer file
-        filepath = os.path.join(project, series, 'freezer.bat')
+        filepath = os.path.join(project, series, 'snapshot.bat')
         with open(filepath, 'w') as frz:
             frz.writelines(freezer)
 
-
-        cmd = 'run.sh'
+        cmd = 'run.bat'
         self.start(cmd, project, series, run_id, replacements=replacements)
 
 
@@ -260,6 +259,7 @@ def main():
     n = Node()
 
     try:
+        #Pyro4.locateNS(host='queue', port=9090)
         Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
     except:
         print('\n###\nNo Pyro name server found on local network.')
