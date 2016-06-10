@@ -55,7 +55,7 @@ class RunLogTable(Table):
     allow_sort = True
 
     status = StatusCol('')
-    id = Col('Run ID')
+    id = Col('Run')
     project = Col('Project')
     series = Col('Series')
     note = Col('Notes')
