@@ -17,8 +17,6 @@ for extra_dir in EXTRA_WATCH_DIRS:
             if os.path.isfile(filename):
                 extra_files.append(filename)
 
-print extra_files
-
 # manager.run()
 app.run(debug=True, extra_files=extra_files)
 

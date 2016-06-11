@@ -9,5 +9,4 @@ flask-wtf
 pyro4
 requests
 sqlalchemy
-watchdog
 wtforms
