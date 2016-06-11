@@ -20,7 +20,8 @@ def view_demo_launcher(cls):
         if form.validate():
             # Parse host, so we can build an update URL on the other side
             host_url = urlparse.urlparse(request.url)
-            host = "%s:%d" % (host_url.hostname, host_url.port)
+            host = host_url.hostname
+            if host_url.port: host += ":"+str(host_url.port)
 
             tool = Plugin(form.data)
             tool.set_plugin(name=name,

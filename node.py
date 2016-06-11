@@ -166,7 +166,7 @@ class Node(object):
             url = 'http://' + self.host + '/runlog/' + str(self.run_id)
             print 'Updating via PUT:', url
 
-            response = requests.put(url, params=data)
+            response = requests.put(url, json=data)
 
             logger.info('updated status for run ' + str(self.run_id) + ': response ' + str(response))
 
