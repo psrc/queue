@@ -38,7 +38,9 @@ class Node(object):
     host = None
 
     def __init__(self):
-        self.name = socket.gethostname()
+        self.name = socket.getfqdn() # need fqdn to jump across LAN subnets
+        self.shortname = socket.gethostname()
+
         logger.info('##############################################')
         logger.info('i am: '+self.name)
         logger.info('working dir: '+os.getcwd())
@@ -261,7 +263,8 @@ def main():
 
     try:
         #Pyro4.locateNS(host='queue', port=9090)
-        Pyro4.Daemon.serveSimple({ n : n.name } , host=n.name, ns=True)
+        Pyro4.Daemon.serveSimple({n: n.name}, host=n.shortname, ns=True)
+
     except:
         print('\n###\nNo Pyro name server found on local network.')
         print("To start a Pyro Name Server, do 'pyro4-ns.exe -n [hostname]'")
