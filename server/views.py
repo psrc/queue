@@ -3,8 +3,8 @@ from flask import render_template, jsonify, url_for, request
 from flask_table import Table, Col, DatetimeCol
 from sqlalchemy import desc
 
+from plugins.pluginmount import ModelPlugin
 from server import app
-from pluginmount import ModelPlugin
 from server.models import RunLog
 
 

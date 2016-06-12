@@ -3,11 +3,11 @@ import urlparse
 import Pyro4
 from flask import request, render_template, redirect
 from flask_wtf import Form
-from wtforms import validators, StringField, FileField, SelectField, SubmitField
+from wtforms import validators, StringField, SelectField, SubmitField
 
+from plugins.plugin import Plugin
+from plugins.pluginmount import ModelPlugin
 from server import forms
-from server.plugin import Plugin
-from server.pluginmount import ModelPlugin
 
 name =     'Demo'
 script   = 'plugins/Demo/demo.script'

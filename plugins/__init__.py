@@ -8,7 +8,7 @@ __all__ = [plugin for plugin in os.listdir(FOLDER) if os.path.isdir(FOLDER + plu
 # This import 'magically' attaches all plugins to the ModelPlugin mount point
 # See http://martyalchin.com/2008/jan/10/simple-plugin-framework/
 from plugins import *
-from server.pluginmount import ModelPlugin
+from plugins.pluginmount import ModelPlugin
 
 
 def register_plugins(app):
