@@ -6,7 +6,15 @@
 <h3>RUN LOG</h3>
 
 {% if runlog %}
+
     {{ runlog }}
+
+    <!-- pager links -->
+    {% if pager.has_prev or pager.has_next %}
+        {% if pager.has_prev %}<a href="{{ url_for('view_index', page=pager.prev_num) }}">&laquo;&nbsp;Prev page</a>{% else %}&laquo;&nbsp;Prev Page{% endif %} &nbsp;&nbsp;
+        {% if pager.has_next %}<a href="{{ url_for('view_index', page=pager.next_num) }}">Next page&nbsp;&raquo;</a>{% else %}Next page&nbsp;&raquo;{% endif %}
+    {% endif %}
+
 {% else %}
     <p>Run log is empty.</p>
 {% endif %}

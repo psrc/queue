@@ -8,25 +8,30 @@ from plugins.pluginmount import ModelPlugin
 from server import app
 from server.models import RunLog
 
+RUNS_PER_PAGE = 10
+
 
 @app.route("/")
-def view_index():
+@app.route("/<int:page>")
+@app.route("/index")
+@app.route("/index/<int:page>")
+def view_index(page=1):
     if not request.args.get('sort'):
         # Default is to sort by run id, descending (most recent first)
         sort = reverse = None
-        entries = RunLog.query.order_by(desc('id'))
+        entries = RunLog.query.order_by(desc('id')).paginate(page, RUNS_PER_PAGE, False)
     else:
         # Determine sort column and forward/reverse
         sort = request.args.get('sort', 'id')
         direction = request.args.get('direction', 'desc')
         reverse = (direction == 'desc')
         if direction == 'desc':
-            entries = RunLog.query.order_by(desc(sort))
+            entries = RunLog.query.order_by(desc(sort)).paginate(page, RUNS_PER_PAGE, False)
         else:
-            entries = RunLog.query.order_by(sort)
+            entries = RunLog.query.order_by(sort).paginate(page, RUNS_PER_PAGE, False)
 
     # Fetch most recent runs
-    runtable = RunLogTable(entries, sort_by=sort, sort_reverse=reverse,
+    runtable = RunLogTable(entries.items, sort_by=sort, sort_reverse=reverse,
                            classes=['table','table-striped','table-hover'],
                            thead_classes=['thead-inverse'])
 
@@ -34,7 +39,7 @@ def view_index():
     statuses = []
 
     return render_template('index.html',
-                           user=None, runlog=runtable, nodes=statuses)
+                           user=None, runlog=runtable, nodes=statuses, pager=entries)
 
 
 class StatusCol(Col):
@@ -66,9 +71,9 @@ class RunLogTable(Table):
     start = DatetimeCol('Started')
     duration = Col('Took')
 
-    def __init__(self, items, classes=None, thead_classes=None, sort_by=None, sort_reverse=False, no_items=None):
+    def __init__(self, items, classes=None, thead_classes=None, sort_by=None,
+                 sort_reverse=False, no_items=None):
         super(RunLogTable, self).__init__(items, classes, thead_classes, sort_by, sort_reverse, no_items)
-
         # don't bother showing Model column if there is only one model plugin
         if len(ModelPlugin.get_plugins()) < 2: self.tool.show = False
 
@@ -165,9 +170,7 @@ def view_nodes():
 
 @app.route('/nodes/<server_id>')
 def nodestatus(server_id):
-    b = node_cache.get_or_update_status(server_id)
-    print str(b)
-    return b #node_cache.get_or_update_status(server_id)
+    return node_cache.get_or_update_status(server_id)
 
 
 @app.route('/register/')
@@ -252,8 +255,7 @@ class NodeStatusCache(object):
     self.node ==> name: (last_checked, state, label)
     """
 
-
-    def __init__(self, stale_seconds=60):
+    def __init__(self, stale_seconds=15):
         self.lookup = {}
         self.EXPIRATION = timedelta(stale_seconds)
 
@@ -284,4 +286,4 @@ class NodeStatusCache(object):
         self.lookup[node] = (datetime.now(), state, label)
         return jsonify(node=node, state=state, label=label)
 
-node_cache = NodeStatusCache(stale_seconds=15)
+node_cache = NodeStatusCache()
