@@ -1,3 +1,7 @@
+from time import strftime
+
+from datetime import timedelta
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property
 
 from server import db
@@ -36,12 +40,20 @@ class RunLog(db.Model):
     note = db.Column(db.String(2048))
     status = db.Column(db.Integer)
     start = db.Column(db.DateTime)
-    end= db.Column(db.DateTime)
+    end = db.Column(db.DateTime)
     tool = db.Column(db.String)
     tool_tag = db.Column(db.String(64))
     inputs = db.Column(db.String(2048))
 
-    duration = column_property(end - start)
+    @hybrid_property
+    def duration(self):
+        try:
+            length = str(self.end - self.start)
+            length = length[:length.rfind('.')]
+        except:
+            length = ""
+
+        return length
 
     def __repr__(self): return '<Runlog %s>' % str(self.id)
     def __unicode__(self):

@@ -2,6 +2,7 @@ import Pyro4
 from flask import render_template, jsonify, url_for, request
 from flask_table import Table, Col, DatetimeCol
 from sqlalchemy import desc
+from datetime import datetime, timedelta
 
 from plugins.pluginmount import ModelPlugin
 from server import app
@@ -63,6 +64,7 @@ class RunLogTable(Table):
     tool = Col('Model')
     # user_id = Col('User')
     start = DatetimeCol('Started')
+    duration = Col('Took')
 
     def __init__(self, items, classes=None, thead_classes=None, sort_by=None, sort_reverse=False, no_items=None):
         super(RunLogTable, self).__init__(items, classes, thead_classes, sort_by, sort_reverse, no_items)
@@ -223,7 +225,16 @@ def runlog(run_id=None):
     if request.method == 'PUT':
         if 'status' in request.json:
             from server import db
+
+            # update exit-status
             log.status = request.json['status']
+
+            log.end = datetime.now()
+            delta = log.end - log.start
+            dur = delta.__str__()
+            print dur
+
+            # save to db
             db.session.add(log)
             db.session.commit()
 
@@ -234,29 +245,4 @@ def runlog(run_id=None):
         template='%s-results.html' % tool.title.lower()
 
         return render_template(template, log=log, tool=tool, user=None)
-
-
-@app.route('/update_runlog/<int:run_id>/')
-def update_runlog(run_id=None):
-    '''Post: Update runlog status
-    '''
-    #todo This is WRONG! -- I'm using a GET instead of a POST, and I'm changing the database
-    # This breaks the REST paradigm, but Django is blocking POST because of cross-site-request-forgery
-    # I think.  I need to fix this, but I'm hacking it here for now because, time.
-
-    # update status
-    status = request.GET['status'][0]
-    run.status = int(status)
-
-    # Calculate duration
-    rawtime = timezone.now() - run.start
-    timedelta = datetime.timedelta(days=rawtime.days, seconds=rawtime.seconds)
-    run.duration = timedelta
-
-    # Save in Db
-    run.save()
-
-    return HttpResponseRedirect('/')
-    #return render(request, 'dashboard/index.html', {'form': form})
-
 
