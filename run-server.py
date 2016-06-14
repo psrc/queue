@@ -2,7 +2,8 @@ import os
 import plugins
 from server import app, manager
 
-EXTRA_WATCH_DIRS = ['server/templates/']
+EXTRA_WATCH_DIRS = ['server/templates/',
+                    'server/static/']
 
 print '\nPSRC QUEUE'
 plugins.register_plugins(app)

@@ -148,27 +148,26 @@ def monitor(request):
                               {'data': sorted(results_dict.iteritems())})
 
 
+node_list = []
+node_list_expires = datetime.now()  # startup time -- pre-expired!
+
 @app.route('/nodes/')
 def view_nodes():
-    with Pyro4.locateNS() as ns:
-        nodes = ns.list(regex='^(?!.*NameServer).*$').keys()
-        nodes.sort()
+    global node_list_expires, node_list
+    if node_list_expires < datetime.now():
+        with Pyro4.locateNS() as ns:
+            node_list = ns.list(regex='^(?!.*NameServer).*$').keys()
+            node_list.sort()
+            node_list_expires = datetime.now() + timedelta(minutes=5)
 
-        return jsonify(nodes=nodes)
+    return jsonify(nodes=node_list)
 
 
 @app.route('/nodes/<server_id>')
 def nodestatus(server_id):
-    try:
-        n = Pyro4.Proxy('PYRONAME:' + server_id)
-        state = n.is_busy() and "status-in-use" or "status-idle"
-        label = n.is_busy() and "IN USE" or "OK"
-    except:
-        # if it can't connect, big red x
-        label = "ERR"
-        state = "status-err"
-
-    return jsonify(node=server_id, state=state, label=label)
+    b = node_cache.get_or_update_status(server_id)
+    print str(b)
+    return b #node_cache.get_or_update_status(server_id)
 
 
 @app.route('/register/')
@@ -246,3 +245,43 @@ def runlog(run_id=None):
 
         return render_template(template, log=log, tool=tool, user=None)
 
+
+class NodeStatusCache(object):
+    """Helper class to make node status checks take less time
+
+    self.node ==> name: (last_checked, state, label)
+    """
+
+
+    def __init__(self, stale_seconds=60):
+        self.lookup = {}
+        self.EXPIRATION = timedelta(stale_seconds)
+
+    def get_or_update_status(self, node):
+        # Fetch if first time
+        if node not in self.lookup:
+            return self.update(node)
+
+        # Fetch if stale
+        last_checked, state, label = self.lookup[node]
+        if datetime.now() - last_checked > self.EXPIRATION:
+            return self.update(node)
+
+        # Return cache if not stale yet
+        return jsonify(node=node, state=state, label=label)
+
+    def update(self, node):
+        try:
+            n = Pyro4.Proxy('PYRONAME:' + node)
+            busy = n.is_busy()
+            state = busy and "status-in-use" or "status-idle"
+            label = busy and "IN USE" or "OK"
+        except:
+            # if it can't connect, big red x
+            label = "ERR"
+            state = "status-err"
+
+        self.lookup[node] = (datetime.now(), state, label)
+        return jsonify(node=node, state=state, label=label)
+
+node_cache = NodeStatusCache(stale_seconds=15)
