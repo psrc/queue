@@ -32,8 +32,7 @@ def view_index(page=1):
 
     # Fetch most recent runs
     runtable = RunLogTable(entries.items, sort_by=sort, sort_reverse=reverse,
-                           classes=['table','table-striped','table-hover'],
-                           thead_classes=['thead-inverse'])
+                           classes=['table','table-striped','table-hover'])
 
     # Placeholder for active nodes - client-side JS will fill this in later
     statuses = []
