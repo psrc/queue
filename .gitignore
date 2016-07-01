@@ -1,6 +1,7 @@
 .idea
 venv
 docs/site
+tmp/
 
 *.pyc
 *.pyo

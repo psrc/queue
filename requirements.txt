@@ -2,7 +2,9 @@
 
 flask
 flask-bootstrap
+flask-login
 flask-migrate
+flask-openid
 flask-sqlalchemy
 flask-table
 flask-wtf

@@ -72,6 +72,19 @@
 
 				<div class="container">
 		        <div class="span9" style="padding-right:20px;">
+
+					{% with messages = get_flashed_messages() %}
+						  {% if messages %}
+							<ul>
+							{% for message in messages %}
+								<li>{{ message }} </li>
+							{% endfor %}
+							</ul>
+						  {% endif %}
+					{% endwith %}
+				</div>
+		        <div class="span9" style="padding-right:20px;">
+
 		            {% block body_block %}
 		            {% endblock %}
 				</div>

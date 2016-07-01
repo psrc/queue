@@ -1,11 +1,12 @@
 import Pyro4
 from Pyro4.errors import PyroError
 from flask_wtf import Form
-from wtforms import ValidationError
+from wtforms import ValidationError, BooleanField
 from wtforms import validators, StringField, FileField, SelectField, SubmitField, PasswordField
 
 
 # VALIDATORS ---------------------------------
+from wtforms.validators import DataRequired
 
 
 def verify_node_is_free(form, field):
@@ -41,6 +42,11 @@ def is_valid_file(f):
 # FORMS ---------------------------------
 
 class UserForm(Form):
-    username = StringField('Username', validators=[validators.required()])
-    email    = StringField('Email', validators=[validators.required()])
-    password = PasswordField('Password', validators=[validators.required()])
+    nickname = StringField('Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+
+
+class LoginForm(Form):
+    openid = StringField('openid', validators=[DataRequired()])
+    remember_me = BooleanField('remember_me', default=False)

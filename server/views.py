@@ -1,15 +1,27 @@
 import Pyro4
-from flask import render_template, jsonify, url_for, request
+from flask import abort, flash, render_template, jsonify, url_for
+from flask import request, redirect, g, session
+from flask_login import login_required, login_user, logout_user, current_user
 from flask_table import Table, Col, DatetimeCol
 from sqlalchemy import desc
 from datetime import datetime, timedelta
 
 from plugins.pluginmount import ModelPlugin
-from server import app
-from server.models import RunLog
+from server import app, lm, oid, db
+from server.forms import LoginForm
+from server.models import RunLog, User
 
 RUNS_PER_PAGE = 10
 
+
+@lm.user_loader
+def load_user(uid):
+    return User.query.get(int(uid))
+
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 @app.route("/")
 @app.route("/<int:page>")
@@ -99,61 +111,61 @@ def view_launcher():
     return render_template('launcher.html', user=None, tools=tools)
 
 
-@app.route('/login/')
-def user_login(request):
-    context = RequestContext(request)
+@app.route('/login/', methods=['GET', 'POST'])
+@oid.loginhandler   # tells openID plugin: this is the login handler
+def login():
 
-    # If request is HTTP POST, try to extract user profile data
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+    if g.user is not None and g.user.is_authenticated:
+        return redirect(url_for('index'))
 
-        user = authenticate(username=username, password=password)
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for OpenID="%s", remember_me=%s' %
+              (form.openid.data, str(form.remember_me.data)))
+        session['remember_me'] = form.remember_me.data
 
-        # If we have a User object, the details are correct.
-        if user:
-            # Is account active? It could have been disabled by the admin
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect('/')
-            else:
-                return HttpResponse('Your account is disabled. Please contact an administrator.')
-        else:
-            # Invalid login details provided.
-            print "Invalid login details: {0}, {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied.")
+        return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
 
-    # Reguest is not HTTP POST, display the login form.
-    else:
-        return render_to_response('dashboard/login.html', {}, context)
+    return render_template('login.html', form=form, user=None,
+                           providers=app.config['OPENID_PROVIDERS'])
+
+
+@oid.after_login
+def after_login(resp):
+    if resp.email is None or resp.email == "":
+        flash('Invalid login. Please try again.')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=resp.email).first()
+    if user is None:
+        nickname = resp.nickname
+        if nickname is None or nickname == "":
+            nickname = resp.email.split('@')[0]
+
+        user = User(nickname=nickname, email=resp.email)
+
+        db.session.add(user)
+        db.session.commit()
+
+    remember_me = False
+    if 'remember_me' in session:
+        remember_me = session['remember_me']
+        session.pop('remember_me', None)
+
+    login_user(user, remember = remember_me)
+    return redirect(request.args.get('next') or url_for('index'))
 
 
 @app.route('/logout/')
-def user_logout(request):
-    logout(request)
-
-    # Return to homepage
-    return HttpResponseRedirect('/')
-
-
-@app.route('/monitor/')
-def monitor(request):
-    # Load the monitoring page
-    context = RequestContext(request)
-
-    # List of potential model server machines on local network
-    nodelist = ['PSRC3827', 'MODELSRV2', 'MODELSRV3', 'MODELSRV4']
-
-    # Show run status
-    code_dict = dispatcher.check_nodes(nodelist)
-    results_dict = dispatcher.rd_check_nodes(code_dict)
-
-    return render_to_response('dashboard/monitor.html',
-                              {'data': sorted(results_dict.iteritems())})
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 node_list = []
 node_list_expires = datetime.now()  # startup time -- pre-expired!
+
 
 @app.route('/nodes/')
 def view_nodes():
@@ -225,7 +237,6 @@ def runlog(run_id=None):
 
     if request.method == 'PUT':
         if 'status' in request.json:
-            from server import db
 
             # update exit-status
             log.status = request.json['status']
