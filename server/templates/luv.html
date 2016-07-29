@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+
+<table><tr>
+    <td style="vertical-align:top; padding-right:10px;">
+        <img width=96 src="{{url_for('static',filename='img/4k.png')}}"/>
+    </td>
+    <td style="vertical-align:top;">
+        <h3>RUN LUV SUMMARIES</h3>
+
+        <p>Create R summaries of LUV scenarios.</p>
+    </td></tr>
+</table>
+
+<div style="margin-left:108px;">
+    {{ wtf.quick_form(form, action="/LUV/") }}
+</div>
+
+{% endblock %}

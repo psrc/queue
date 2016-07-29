@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+
+<h3><img width=48 src="{{url_for('static',filename='img/4k.png')}}"/>&nbsp;&nbsp;{{log.project}}</h3>
+
+<h5>&nbsp;&nbsp;RUN {{log.id}}: SUMMARY RESULTS</h5>
+
+<table class="table">
+    <tr><td>Project</td><td>{{log.project}}</td></tr>
+    <tr><td>Notes</td>  <td>{{log.note}}</td></tr>
+    <tr><td>Start</td>  <td>{{log.start.ctime()}}</td></tr>
+</table>
+
+<p><b><i>&nbsp;&nbsp;Add fancy visualizations here!</i></b></p>
+<img src="{{url_for('static',filename='img/scatterplot.png')}}"/>
+
+
+{% endblock %}
