@@ -17,18 +17,21 @@ class Plugin(object):
         self.script = None
         self.snapshot = None
         self.host = None
+        
 
-    def set_plugin(self, name=None, script=None, snapshot=None, host=None):
+    def set_plugin(self, name=None, script=None, snapshot=None, host=None, plugin_inputs=None):
         self.name = name
         self.script = script
         self.snapshot = snapshot
         self.host = host
+        self.plugin_inputs = plugin_inputs    # key-value pairs for unique plugin form fields
 
-    def run_model(self):
+    def run_model(self, form):
         """
         yeah run that model!
         """
 
+        # plugin_inputs = self.plugin_inputs
         tool = self.name
         series = self.get_next_series(self.project)
 
@@ -50,6 +53,8 @@ class Plugin(object):
         replacements = {}
         replacements['TAG'] = self.tag
         replacements['QUEUE_RUN_ID'] = run
+        for field_name, field_value in self.plugin_inputs.iteritems():
+            replacements[field_name] = field_value
 
         # and run the fluffy
         n.runscript(lines, freezer_lines, self.project, series,
@@ -62,7 +67,7 @@ class Plugin(object):
         """
         run = RunLog(user=None, project=self.project, series=series,
                      note=self.notes, tool=tool, tool_tag=self.tag,
-                     status=-1, start=datetime.now())
+                     status=-1, start=datetime.now(), node=self.node)
 
         db.session.add(run)
         db.session.commit()

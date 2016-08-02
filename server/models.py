@@ -72,6 +72,7 @@ class RunLog(db.Model):
     tool = db.Column(db.String)
     tool_tag = db.Column(db.String(64))
     inputs = db.Column(db.String(2048))
+    node = db.Column(db.String(64))
 
     @hybrid_property
     def duration(self):

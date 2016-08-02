@@ -81,6 +81,7 @@ class RunLogTable(Table):
     # user_id = Col('User')
     start = DatetimeCol('Started')
     duration = Col('Took')
+    node = Col('Node')
 
     def __init__(self, items, classes=None, thead_classes=None, sort_by=None,
                  sort_reverse=False, no_items=None):

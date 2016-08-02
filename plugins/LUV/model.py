@@ -12,10 +12,11 @@ from server import forms
 name =     'LUV'
 script   = 'plugins/LUV/luv.script'
 snapshot = 'plugins/LUV/luv-snapshot.bat'
-
+standard_form_fields = ['project','notes','tag','node', 'submit']
 
 def view_luv_launcher(cls):
     form = LuvLauncherForm()
+    # specialform = SpecialForm(form)
     if request.method == 'POST':
         if form.validate():
             # Parse host, so we can build an update URL on the other side
@@ -23,14 +24,23 @@ def view_luv_launcher(cls):
             host = host_url.hostname
             if host_url.port: host += ":"+str(host_url.port)
 
+            # Set non-standard plugin form fields
+            plugin_inputs = {}
+            for field_name, field_value in form.data.iteritems():
+                if field_name not in standard_form_fields:
+                    plugin_inputs[field_name] = field_value
+
             tool = Plugin(form.data)
             tool.set_plugin(name=name,
                             script=script,
                             snapshot=snapshot,
-                            host=host)
+                            host=host,
+                            plugin_inputs=plugin_inputs)
+
+            print tool.plugin_inputs
 
             # spawn model and redirect to the main index
-            tool.run_model()
+            tool.run_model(form)
             return redirect('/')
 
         else:
@@ -43,6 +53,7 @@ def view_luv_launcher(cls):
     return render_template('luv.html', user=None, form=form)
 
 
+
 class LuvLauncherForm(Form):
     project       = StringField('Project', [validators.InputRequired(), validators.Length(max=50)])
 
@@ -50,7 +61,9 @@ class LuvLauncherForm(Form):
 
     tag           = StringField('Git Repo tag', [validators.Length(max=512)])
 
-    qc_run1       = StringField('Comparison Run', [validators.Length(max=512)])    
+    qc_run_base   = StringField('Comparison Run: Base Name', [validators.Length(max=512)])    
+
+    qc_run_scen   = StringField('Comparison Run: Scenario Name', [validators.Length(max=512)])  
 
     node          = SelectField(label='Run on', validators=[forms.verify_node_is_free])
 
@@ -67,7 +80,6 @@ class LuvLauncherForm(Form):
             all_nodes = ['Nameserver not found']
 
         self.node.choices = [(x, x) for x in all_nodes if 'NameServer' not in x]
-
 
 class Luv(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """

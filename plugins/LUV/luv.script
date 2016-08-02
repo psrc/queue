@@ -17,15 +17,14 @@ if defined TMPFILE move /Y "%TMPFILE%" .
 
 :: write new inputs.txt file
 (
-	echo test=%QC_RUN1%
 	echo QC_NAME=run81
 	echo QC_BASE_DIRECTORY=//modelsrv3/e$$/opusgit/urbansim_data/data/psrc_parcel/runs
-	echo QC_RUN1=run_81.run_2016_07_05_16_00
-	echo QC_RUN2=run_170.run_2015_09_15_16_02
+	echo QC_RUN1=%qc_run_base%
+	echo QC_RUN2=%qc_run_scen%
 	echo DECREASE_THRESHOLD=100
 	echo DECREASE_THRESHOLD_PERCENT=2
-	echo RREPORT_RUNS=run_78.run_2016_06_23_09_47, run_170.run_2015_09_15_16_02
-echo RREPORT_ANNUAL=TRUE
+	echo RREPORT_RUNS=%qc_run_base%, %qc_run_scen%
+    echo RREPORT_ANNUAL=TRUE
 ) > inputs.txt
 
 :: freeze inputs.
