@@ -4,7 +4,6 @@ import Pyro4
 from server.models import RunLog, User
 from server import db
 
-
 class Plugin(object):
     def __init__(self, data):
         self.project = data['project']
@@ -26,7 +25,7 @@ class Plugin(object):
         self.host = host
         self.plugin_inputs = plugin_inputs    # key-value pairs for unique plugin form fields
 
-    def run_model(self, form):
+    def run_model(self, form, config):
         """
         yeah run that model!
         """
@@ -57,7 +56,7 @@ class Plugin(object):
             replacements[field_name] = field_value
 
         # and run the fluffy
-        n.runscript(lines, freezer_lines, self.project, series,
+        n.runscript(lines, freezer_lines, self.project, series, config,
                     run_id=run, replacements=replacements, host=self.host)
 
     def add_log_entry(self, tool, series):

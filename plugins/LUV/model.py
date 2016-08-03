@@ -8,6 +8,7 @@ from wtforms import validators, StringField, SelectField, SubmitField
 from plugins.plugin import Plugin
 from plugins.pluginmount import ModelPlugin
 from server import forms
+from plugins.LUV.luv_config import luv_config_dict
 
 name =     'LUV'
 script   = 'plugins/LUV/luv.script'
@@ -37,10 +38,8 @@ def view_luv_launcher(cls):
                             host=host,
                             plugin_inputs=plugin_inputs)
 
-            print tool.plugin_inputs
-
             # spawn model and redirect to the main index
-            tool.run_model(form)
+            tool.run_model(form, config=luv_config_dict)
             return redirect('/')
 
         else:
@@ -85,7 +84,7 @@ class Luv(ModelPlugin):
     """ PSRC SoundCast activity-based model plugin """
     title = 'LUV'
     description = "LUV Summaries"
-    image = 'img/4k.png'
+    image = 'img/urbansim.png'
     url = 'http://www.queue-project.org'
     form = LuvLauncherForm
     dbtable = None

@@ -16,8 +16,10 @@
 </a></td> </tr>
 </table>
 
-
-<img src="{{url_for('static',filename='img/scatterplot.png')}}"/>
-
+{% if bodyhtml %}
+{{bodyhtml|safe}}
+{% else %}
+<h5>IN PROGRESS...<h5>
+{% endif %}
 
 {% endblock %}

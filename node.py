@@ -24,9 +24,9 @@ import subprocess
 import socket
 import threading
 import time
+from bs4 import BeautifulSoup
 
 logger = logging.getLogger(socket.gethostname())
-
 
 class Node(object):
     busy = False
@@ -90,7 +90,8 @@ class Node(object):
         return (self.returncode, self.busy, self.command, self.cwd)
 
 
-    def runscript(self, lines, freezer, project, series, run_id=None, replacements={}, host=None):
+    def runscript(self, lines, freezer, project, series, config, run_id=None,
+        replacements={}, host=None):
         '''
         Take a list of script lines, and run them in a unique folder.
         Folder name formed from project & series.
@@ -113,17 +114,17 @@ class Node(object):
             frz.writelines(freezer)
 
         cmd = 'run.bat'
-        self.start(cmd, project, series, run_id, replacements=replacements)
+        self.start(cmd, project, series, config, run_id, replacements=replacements)
 
 
     def runandwait(self, command, project, series, run_id=None, replacements={}):
         '''
         Spawn a subprocess. Wait for task to finish, and return the process returncode.
         '''
-        self.start(command, project, series, run_id=run_id, wait=True, replacements=replacements)
+        self.start(command, project, series, config, run_id=run_id, wait=True, replacements=replacements)
 
 
-    def start(self, command, project, series, run_id=None, replacements={}, wait=False):
+    def start(self, command, project, series, config, run_id=None, replacements={}, wait=False):
         '''
         Spawn a subprocess. Return immediately.
         '''
@@ -144,10 +145,10 @@ class Node(object):
         self.run_id=run_id
 
         # Launch the process, and save a handle to it in self.p
-        self.popenAndCall(self.onExit, command, project, series, wait, replacements)
+        self.popenAndCall(self.onExit, command, project, series, config, wait, replacements)
 
 
-    def onExit(self, returncode):
+    def onExit(self, project, series, returncode, config):
         """
         Callback function which is run when a subprocess is completed.
         Resets busy flag and gets node ready for the next run.
@@ -164,6 +165,18 @@ class Node(object):
         if self.run_id:
             data = {'status': returncode}
 
+            # Export results HTML doc body to server
+            filepath = os.path.join(project, series, config['results_dir'])
+
+            try:
+                with open(filepath) as f:
+                    html_input = f.read() 
+                soup = BeautifulSoup(html_input, 'html.parser')
+                html_data = soup.body
+                data['results'] = str(html_data)
+            except:
+                html_data = ""
+
             # Build URL from host and run_id
             url = 'http://' + self.host + '/runlog/' + str(self.run_id)
             print 'Updating via PUT:', url
@@ -176,7 +189,7 @@ class Node(object):
             pass #raise RuntimeError('Failed: return code '+str(returncode))
 
 
-    def popenAndCall(self, onExit, command, project, series, wait, replacements):
+    def popenAndCall(self, onExit, command, project, series, config, wait, replacements):
         """
         Runs the given args in a subprocess.Popen, and then calls the function
         onExit when the subprocess completes. onExit is a callable object.
@@ -203,7 +216,7 @@ class Node(object):
 #            except:
 #                rtncode = 8
 #            finally:
-            onExit(rtncode)
+            onExit(project=project, series=series, returncode=rtncode, config=config)
 
         if wait:
             runIt(onExit, command)

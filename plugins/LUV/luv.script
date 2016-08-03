@@ -17,7 +17,7 @@ if defined TMPFILE move /Y "%TMPFILE%" .
 
 :: write new inputs.txt file
 (
-	echo QC_NAME=run81
+	echo QC_NAME=all
 	echo QC_BASE_DIRECTORY=//modelsrv3/e$$/opusgit/urbansim_data/data/psrc_parcel/runs
 	echo QC_RUN1=%qc_run_base%
 	echo QC_RUN2=%qc_run_scen%

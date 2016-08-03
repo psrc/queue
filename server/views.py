@@ -1,3 +1,4 @@
+import os
 import Pyro4
 from flask import abort, flash, render_template, jsonify, url_for
 from flask import request, redirect, g, session
@@ -5,6 +6,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from flask_table import Table, Col, DatetimeCol
 from sqlalchemy import desc
 from datetime import datetime, timedelta
+import codecs
 
 from plugins.pluginmount import ModelPlugin
 from server import app, lm, oid, db
@@ -236,7 +238,22 @@ def runlog(run_id=None):
     """GET: show run details.  PUT: update run exit-status"""
     log = RunLog.query.filter_by(id=run_id).first()
 
+    project = log.project
+    series = log.series
+    toolname = log.tool
+
+    # Save HTML summary report on server from completed run here
+    report_path = os.path.join(os.getcwd(),"results/"+toolname+"/"+project+"/"+series)
+
     if request.method == 'PUT':
+        if 'results' in request.json:
+
+            if not os.path.exists(report_path):
+                os.makedirs(report_path)
+
+            with open(report_path+"/index.html", "w") as text_file:
+                text_file.write(request.json['results'].encode('utf8'))
+
         if 'status' in request.json:
 
             # update exit-status
@@ -251,14 +268,18 @@ def runlog(run_id=None):
             db.session.add(log)
             db.session.commit()
 
-            return 'OK'
+        return 'OK'
 
     else:
         tool = ModelPlugin.get(log.tool)
         template='%s-results.html' % tool.title.lower()
 
-        return render_template(template, log=log, tool=tool, user=None)
+        # Fetch HTML summary report data
+        bodyhtml = None
+        if os.path.isfile(report_path+"/index.html"):
+            bodyhtml = codecs.open(report_path+"/index.html",'r','utf-8').read()
 
+        return render_template(template, log=log, tool=tool, bodyhtml=bodyhtml, user=None)
 
 class NodeStatusCache(object):
     """Helper class to make node status checks take less time
