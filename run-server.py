@@ -1,6 +1,6 @@
 import os
 import plugins
-from server import app, manager
+from server import app, manager, db
 
 EXTRA_WATCH_DIRS = ['server/templates/',
                     'server/static/']
@@ -17,6 +17,10 @@ for extra_dir in EXTRA_WATCH_DIRS:
             filename = os.path.join(dirname, filename)
             if os.path.isfile(filename):
                 extra_files.append(filename)
+
+# Create a new db when initialized
+if not os.path.isfile('server.sqlite'):
+	db.create_all()
 
 # manager.run()
 app.run(debug=True, extra_files=extra_files)
