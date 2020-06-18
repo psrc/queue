@@ -5,13 +5,13 @@ from server import app, manager, db
 EXTRA_WATCH_DIRS = ['server/templates/',
                     'server/static/']
 
-print '\nPSRC QUEUE'
+print('\nPSRC QUEUE')
 plugins.register_plugins(app)
 
 # Flask doesn't watch template files in debug mode
 extra_files = EXTRA_WATCH_DIRS[:]
 for extra_dir in EXTRA_WATCH_DIRS:
-    print 'Watching extra dir for changes:', extra_dir
+    print( 'Watching extra dir for changes:', extra_dir)
     for dirname, dirs, files in os.walk(extra_dir):
         for filename in files:
             filename = os.path.join(dirname, filename)

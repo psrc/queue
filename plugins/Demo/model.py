@@ -30,7 +30,7 @@ def view_demo_launcher(cls):
                             host=host)
 
             # spawn model and redirect to the main index
-            tool.run_model()
+            tool.run_model(form, config={'name':'hello'})
             return redirect('/')
 
         else:

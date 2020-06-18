@@ -18,7 +18,7 @@ class Plugin(object):
         self.host = None
         
 
-    def set_plugin(self, name=None, script=None, snapshot=None, host=None, plugin_inputs=None):
+    def set_plugin(self, name=None, script=None, snapshot=None, host=None, plugin_inputs={}):
         self.name = name
         self.script = script
         self.snapshot = snapshot

@@ -1,14 +1,19 @@
 # run pip install -r requirements.txt
 
-flask
-flask-bootstrap
-flask-login
-flask-migrate
-flask-openid
-flask-sqlalchemy
-flask-table
-flask-wtf
-pyro4
-requests
-sqlalchemy
-wtforms
+flask==0.11.1
+flask-bootstrap==3.3.6.0
+flask-login==0.3.2
+flask-migrate==1.8.1
+flask-openid==1.2.5
+flask-sqlalchemy==2.1
+flask-table==0.2.11
+flask-wtf==0.12
+pyro4==4.43
+requests==2.11
+sqlalchemy==1.0.13
+wtforms==2.1
+serpent==1.11
+alembic==0.8.6
+werkzeug==0.11.9
+bs4
+
