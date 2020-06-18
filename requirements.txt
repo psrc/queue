@@ -14,6 +14,6 @@ sqlalchemy==1.0.13
 wtforms==2.1
 serpent==1.11
 alembic==0.8.6
-werkzeug==0.11.9
+werkzeug==0.15.3
 bs4
 
