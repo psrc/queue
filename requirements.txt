@@ -9,7 +9,7 @@ flask-sqlalchemy==2.1
 flask-table==0.2.11
 flask-wtf==0.12
 pyro4==4.43
-requests==2.11
+requests==2.20.0
 sqlalchemy==1.0.13
 wtforms==2.1
 serpent==1.11
